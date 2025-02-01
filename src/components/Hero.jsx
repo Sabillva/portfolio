@@ -1,4 +1,3 @@
-import myVideo from "../assets/football.mp4";
 
 function Hero() {
   return (
