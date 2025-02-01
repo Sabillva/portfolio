@@ -1,0 +1,79 @@
+.hero-section {
+  padding: 96px 56px;
+}
+
+.hero-h1 {
+  font-size: 60px;
+  line-height: 1;
+  font-weight: bold;
+  margin-top: 44px;
+  background-image: linear-gradient(to bottom, #23ff40, #cbe8c5);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero-p {
+  font-size: 18px;
+  line-height: 1.1;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 32px;
+}
+
+.hero-form {
+  display: flex;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
+  padding: 8px;
+  justify-content: space-between;
+  max-width: 512px;
+  margin: 32px auto;
+  background-color: #171717;
+
+}
+
+.hero-input {
+  background-color: transparent;
+  padding: 0 16px;
+  border: none;
+  font-size: 16px;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 0%;
+}
+
+.hero-signup {
+  border: none;
+  background-color: #ffffff;
+  color: rgb(0, 0, 0);
+  height: 40px;
+  border-radius: 9999px;
+  padding: 0 24px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+
+@media (min-width: 768px) {
+  .hero-h1 {
+    font-size: 72px;
+    line-height: 1;
+  }
+
+  .hero-p {
+    font-size: 24px;
+    line-height: 1.1;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-h1 {
+    font-size: 78px;
+    line-height: 1;
+  }
+
+  .hero-p {
+    font-size: 28px;
+    line-height: 1.1;
+  }
+}
