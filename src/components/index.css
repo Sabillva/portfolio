@@ -1,0 +1,98 @@
+* {
+  margin: 0;
+}
+
+@font-face {
+  font-family: "Ravio Regular";
+  src: local("Ravio Regular"),
+    url("../fonts/Ravio-Regular.ttf") format("truetype");
+  font-weight: bold;
+}
+
+body {
+  font-family: "Ravio Regular";
+}
+
+.header-text {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+  color: white;
+  padding: 12px;
+  font-size: 14px;
+}
+
+.right-arrow {
+  height: 16px;
+  width: 16px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  filter: invert(85%) sepia(90%) saturate(10%) hue-rotate(180deg);
+}
+
+.header {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.logo {
+  height: 40px;
+  width: 40px;
+}
+
+.navbar {
+  padding: 20px;
+}
+
+.menu {
+  height: 20px;
+  width: 20px;
+}
+
+.navbarr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.headerr {
+  position: sticky;
+  top: 0;
+}
+
+.nav-links {
+  display: none;
+  gap: 24px;
+  align-items: center;
+}
+
+.nav-links a {
+  color: rgba(225, 225, 225, 0.6);
+  text-decoration: none;
+}
+
+.nav-links button {
+  background-color: rgb(255, 255, 255);
+  border: none;
+  color: rgba(0, 0, 0, 0.6);
+  padding: 8px 16px;
+  border-radius: 30px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: -0.02em;
+  cursor: pointer;
+}
+
+@media (min-width: 768px) {
+  .menu {
+    display: none;
+  }
+  .nav-links {
+    display: flex;
+  }
+}
