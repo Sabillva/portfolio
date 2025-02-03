@@ -1,23 +1,50 @@
 .hero-section {
+  display: flex;
+  justify-content: center;
   padding: 96px 56px;
+  position: relative;
 }
+
+  /* background-image: linear-gradient(to bottom, #ffffff, #000000); */
+  /* -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent; */
 
 .hero-h1 {
   font-size: 60px;
   line-height: 1;
-  font-weight: bold;
+  font-weight: 500;
   margin-top: 44px;
-  background-image: linear-gradient(to bottom, #23ff40, #cbe8c5);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  text-align: center;
+  color: #ffffff;
+  z-index: 1;
+}
+
+.message {
+  top: 170px;
+  left: 1px;
+  position: absolute;
+  height: 200px;
+  width: 200px;
+  z-index: 0;
+}
+
+.search {
+  top: 80px;
+  right: 1px;
+  position: absolute;
+  height: 200px;
+  width: 200px;
+  z-index: 0;
 }
 
 .hero-p {
+  text-align: center;
   font-size: 18px;
   line-height: 1.1;
   color: rgba(255, 255, 255, 0.5);
-  margin-top: 32px;
+  margin: 32px 66px 0 66px;
+  z-index: 1;
 }
 
 .hero-form {
@@ -29,7 +56,6 @@
   max-width: 512px;
   margin: 32px auto;
   background-color: #171717;
-
 }
 
 .hero-input {
@@ -53,22 +79,31 @@
   white-space: nowrap;
 }
 
+@media (max-width: 768px) {
+  .message {
+    display: none;
+  }
+
+  .search {
+    display: none;
+  }
+}
 
 @media (min-width: 768px) {
   .hero-h1 {
-    font-size: 72px;
+    font-size: 70px;
     line-height: 1;
   }
 
   .hero-p {
-    font-size: 24px;
+    font-size: 22px;
     line-height: 1.1;
   }
 }
 
 @media (min-width: 1024px) {
   .hero-h1 {
-    font-size: 78px;
+    font-size: 80px;
     line-height: 1;
   }
 
