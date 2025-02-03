@@ -11,11 +11,7 @@
 
 body {
   font-family: "Ravio Regular";
-  background-image: radial-gradient(
-    ellipse 200% 100% at bottom left,
-    #737872,
-    #000000 66%
-  );
+  background-color: black;
 }
 
 .header-text {
@@ -24,12 +20,13 @@ body {
   align-items: center;
   background-image: linear-gradient(
     to right,
-    rgba(252, 214, 255, 0.7),
-    rgba(41, 216, 255, 0.7),
-    rgba(255, 253, 128, 0.7),
-    rgba(248, 154, 191, 0.7),
-    rgba(252, 214, 255, 0.7)
+    rgba(252, 214, 255, 0.9),
+    rgba(41, 216, 255, 1),
+    rgba(255, 253, 128, 1),
+    rgba(248, 154, 191, 1),
+    rgba(252, 214, 255, 0.9)
   );
+  text-shadow: 2px 2px 15px rgba(0, 0, 0, 0.6);
   color: rgb(255, 255, 255);
   padding: 12px;
   font-size: 14px;
@@ -42,7 +39,8 @@ body {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  filter: invert(85%) sepia(90%) saturate(10%) hue-rotate(180deg);
+  filter: invert(85%) sepia(90%) saturate(10%) hue-rotate(180deg)
+    drop-shadow(2px 2px 10px rgba(0, 0, 0, 0.6));
 }
 
 .header {
@@ -53,12 +51,13 @@ body {
 
 .headerr {
   position: sticky;
+  z-index: 1;
   top: 0;
 }
 
 .container {
   max-width: 768px;
-  margin: 0 auto;
+  margin: 15px auto;
 }
 
 .logo {
@@ -132,7 +131,7 @@ a {
 }
 
 .top-text {
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(67, 67, 67, 0.8);
   display: none;
 }
 
@@ -142,7 +141,7 @@ a {
   }
 
   .top-text {
-    display: block;
+    display: none;
   }
 
   .div-navlink {

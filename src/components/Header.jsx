@@ -29,7 +29,7 @@ function Header() {
       </div>
 
         <div className="container">
-          <motion.div  initial="hidden" animate="visible" variants={boxVariants} className="navbarr">
+          <div variants={boxVariants} className="navbarr">
           <div className="nav-item">
           <img className="logo" src={Logo} alt="logo" />
           </div>
@@ -49,7 +49,7 @@ function Header() {
   whileTap={{ scale: 0.9 }}
   transition={{ duration: 0.3 }} className="signup">Sign Up</motion.button>
            </div>
-          </motion.div>
+          </div>
 
 
 
