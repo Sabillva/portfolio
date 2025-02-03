@@ -131,32 +131,6 @@ a {
   text-decoration: none;
 }
 
-/*
-.nav-links {
-  display: none;
-  gap: 24px;
-  align-items: center;
-}
-
-.nav-links a {
-  color: rgba(225, 225, 225, 0.6);
-  text-decoration: none;
-}
-
-.nav-links button {
-  background-color: rgb(255, 255, 255);
-  border: none;
-  color: rgba(0, 0, 0, 0.6);
-  padding: 8px 16px;
-  border-radius: 30px;
-  font-weight: 500;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  letter-spacing: -0.02em;
-  cursor: pointer;
-} */
-
 .top-text {
   color: rgba(255, 255, 255, 0.6);
   display: none;
