@@ -13,12 +13,17 @@
   ); */
 }
 
-  /* background-image: linear-gradient(to bottom, #ffffff, #000000); */
-  /* -webkit-background-clip: text;
+/* .hero-container {
+  max-width: 800px;
+} */
+
+/* background-image: linear-gradient(to bottom, #ffffff, #000000); */
+/* -webkit-background-clip: text;
   background-clip: text;
   color: transparent; */
 
 .hero-h1 {
+  /* max-width: 0px; */
   font-size: 60px;
   line-height: 1;
   font-weight: 500;
@@ -30,7 +35,7 @@
 
 .message {
   top: 170px;
-  left: 1px;
+  left: 60px;
   position: absolute;
   height: 200px;
   width: 200px;
@@ -39,7 +44,7 @@
 
 .search {
   top: 80px;
-  right: 1px;
+  right: 100px;
   position: absolute;
   height: 200px;
   width: 200px;
@@ -89,6 +94,20 @@
 }
 
 @media (max-width: 768px) {
+  .hero-container {
+    width: 85%;
+  }
+
+  .hero-h1 {
+    font-size: 58px;
+    line-height: 1;
+  }
+
+  .hero-p {
+    font-size: 14px;
+    line-height: 1.1;
+  }
+
   .message {
     display: none;
   }
@@ -98,26 +117,35 @@
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 768px) and (max-width: 1224px) {
+  .hero-container {
+    width: 70%;
+  }
+
   .hero-h1 {
     font-size: 70px;
     line-height: 1;
   }
 
   .hero-p {
-    font-size: 22px;
+    font-size: 18px;
     line-height: 1.1;
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1224px) {
+  .hero-container {
+    width: 65%;
+    max-width: 1000px;
+  }
+
   .hero-h1 {
     font-size: 80px;
     line-height: 1;
   }
 
   .hero-p {
-    font-size: 28px;
+    font-size: 20px;
     line-height: 1.1;
   }
 

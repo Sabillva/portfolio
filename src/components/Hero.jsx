@@ -1,22 +1,48 @@
 import Search from "../assets/search.png";
 import Message from "../assets/message.png";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 
 function Hero() {
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"],
+  });
+  const messageY = useTransform(scrollYProgress, [0, 1], ["0px", "100px"]);
+  const searchY = useTransform(scrollYProgress, [0, 1], ["0px", "-100px"]);
+
   return (
-    <section className="hero-section">
-      <motion.div initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 1.5 }} className="hero-container">
+    <section className="hero-section" ref={containerRef}>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.5 }}
+        className="hero-container"
+      >
         <h1 className="hero-h1">Find and Book Football Fields Easily</h1>
-        <motion.img className="message w-20 h-20 cursor-pointer" whileHover={{ scale: 1.2, rotate: 15 }}
-      whileTap={{ scale: 0.9, rotate: -15, borderRadius: "10%" }}
-      transition={{ type: "spring", stiffness: 200 }} src={Message} alt="message" />
-        <motion.img className="search  w-20 h-20 cursor-pointer" whileHover={{ scale: 1.2, rotate: 15 }}
-      whileTap={{ scale: 0.9, rotate: -15, borderRadius: "10%" }}
-      transition={{ type: "spring", stiffness: 200 }} src={Search} alt="search" />
+        <motion.img
+          className="message w-20 h-20 cursor-pointer"
+          style={{ y: messageY }}
+          whileHover={{ scale: 1.2, rotate: 15 }}
+          whileTap={{ scale: 0.9, rotate: -15, borderRadius: "10%" }}
+          transition={{ type: "spring", stiffness: 200 }}
+          src={Message}
+          alt="message"
+        />
+        <motion.img
+          className="search w-20 h-20 cursor-pointer"
+          style={{ y: searchY }}
+          whileHover={{ scale: 1.2, rotate: -15 }}
+          whileTap={{ scale: 0.9, rotate: 15, borderRadius: "10%" }}
+          transition={{ type: "spring", stiffness: 200 }}
+          src={Search}
+          alt="search"
+        />
+
         <p className="hero-p">
-        Search, compare, and reserve your favorite football fields in just a few clicks!
+          Search, compare, and reserve your favorite football fields in just a
+          few clicks!
         </p>
         <form className="hero-form">
           <input
@@ -24,9 +50,13 @@ function Hero() {
             placeholder="Enter your email"
             className="hero-input"
           />
-          <motion.button whileHover={{ scale: 0.95 }}
-  whileTap={{ scale: 0.9 }}
-  transition={{ duration: 0.3 }} className="hero-signup" type="submit">
+          <motion.button
+            whileHover={{ scale: 0.95 }}
+            whileTap={{ scale: 0.9 }}
+            transition={{ duration: 0.3 }}
+            className="hero-signup"
+            type="submit"
+          >
             Sign Up
           </motion.button>
         </form>
