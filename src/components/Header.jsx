@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ArrowRight from "../assets/right-arrow.svg";
 import Logo from "../assets/logo.svg";
-// import MenuIcon from "../assets/menu.svg";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navLinks = [
@@ -18,6 +17,17 @@ const boxVariants = {
 };
 
 function Header() {
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768) {
+        setIsOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const [isOpen, setIsOpen] = useState(false);
   return (
     <header className="headerr">
@@ -66,7 +76,6 @@ function Header() {
                   transition={{ type: "spring", stiffness: 200 }}
                 />
               </div>
-              {/* <img className="menu" src={MenuIcon} alt="menu" /> */}
               <motion.button
                 whileHover={{ scale: 0.95 }}
                 whileTap={{ scale: 0.9 }}
@@ -85,12 +94,14 @@ function Header() {
               </motion.button>
             </div>
           </div>
+
           <AnimatePresence>
             {isOpen && (
               <motion.div
-                initial={{ height: 0 }}
-                animate={{ height: "auto" }}
-                exit={{ height: 0 }}
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
                 className="menu-section"
               >
                 <div className="menu-2-section">

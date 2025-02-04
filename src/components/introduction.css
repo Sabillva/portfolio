@@ -2,6 +2,20 @@
   padding: 96px 0;
 }
 
+.intro-design {
+  position: sticky;
+  top: 130px;
+}
+
+.scroll-height {
+  height: 150vh;
+}
+
+.span-design {
+  color: white;
+  transition: color 0.7s ease, font-weight 0.3s ease;
+}
+
 .intro-layer {
   display: inline-flex;
   border: 2px solid rgb(141, 242, 113);
@@ -37,9 +51,9 @@
 }
 
 @media (min-width: 768px) and (max-width: 1224px) {
-    .intro-section {
-        padding: 110px 0;
-      }
+  .intro-section {
+    padding: 110px 0;
+  }
 
   .intro-span {
     font-size: 54px;
@@ -48,9 +62,9 @@
 }
 
 @media (min-width: 1224px) {
-    .intro-section {
-        padding: 140px 0;
-      }
+  .intro-section {
+    padding: 140px 0;
+  }
 
   .intro-span {
     font-size: 68px;

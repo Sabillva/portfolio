@@ -1,29 +1,13 @@
 .hero-section {
-  /* top: -100px; */
+  margin-top: 100px;
   height: 100%;
   display: flex;
   justify-content: center;
   padding: 96px 56px;
   position: relative;
-  /* background-color: black; */
-  /* background-image: radial-gradient(
-    ellipse 200% 100% at bottom left,
-    #737872,
-    #000000 66%
-  ); */
 }
 
-/* .hero-container {
-  max-width: 800px;
-} */
-
-/* background-image: linear-gradient(to bottom, #ffffff, #000000); */
-/* -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent; */
-
 .hero-h1 {
-  /* max-width: 0px; */
   font-size: 60px;
   line-height: 1;
   font-weight: 500;
@@ -34,20 +18,20 @@
 }
 
 .message {
-  top: 170px;
-  left: 60px;
+  top: 140px;
+  left: 90px;
   position: absolute;
-  height: 200px;
-  width: 200px;
+  height: 220px;
+  width: 220px;
   z-index: 0;
 }
 
 .search {
-  top: 80px;
-  right: 100px;
+  top: 120px;
+  right: 95px;
   position: absolute;
-  height: 200px;
-  width: 200px;
+  height: 220px;
+  width: 220px;
   z-index: 0;
 }
 
