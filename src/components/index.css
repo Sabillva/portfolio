@@ -50,7 +50,8 @@ body {
 }
 
 .headerr {
-  position: sticky;
+  position: fixed;
+  width: 100%;
   z-index: 50;
   top: 0;
 }
@@ -68,8 +69,8 @@ body {
 }
 
 .menu {
-  width: 40px;
-  height: 30px;
+  width: 30px;
+  height: 22px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -100,17 +101,19 @@ body {
 }
 
 .nav-section.open {
-  border-radius: 20px;
+  border-radius: 30px;
 }
 
 
 .menu-section {
+  overflow: hidden;
+}
+
+.menu-2-section {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.navlink-menu {
+  gap: 16px;
   padding: 8px 0;
 }
 
@@ -141,6 +144,26 @@ body {
   padding: 0 24px;
   font-weight: 500;
   display: none;
+}
+
+.login-menu {
+  border: 2px solid rgba(255, 255, 255);
+  height: 40px;
+  background-color: transparent;
+  color: white;
+  border-radius: 9999px;
+  padding: 0 24px;
+  font-weight: 500;
+}
+
+.signup-menu {
+  border: none;
+  background-color: #ffffff;
+  color: rgb(0, 0, 0);
+  height: 40px;
+  border-radius: 9999px;
+  padding: 0 24px;
+  font-weight: 500;
 }
 
 .navlink {
@@ -219,10 +242,10 @@ a {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .headerr {
+  /* .headerr {
     position: sticky;
     top: 0;
-  }
+  } */
 
   .div-navlink {
     display: flex;
