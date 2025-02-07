@@ -6,7 +6,7 @@
   font-family: "Ravio Regular";
   src: local("Ravio Regular"),
     url("../fonts/Ravio-Regular.ttf") format("truetype");
-  font-weight: bold;
+  font-weight: 400;
 }
 
 body {
@@ -57,7 +57,7 @@ body {
 }
 
 .container {
-  max-width: 768px;
+  max-width: 850px;
   margin: 15px auto;
 }
 

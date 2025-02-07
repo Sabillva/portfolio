@@ -22,7 +22,7 @@ function Hero() {
       >
         <h1 className="hero-h1">Find and Book Football Fields Easily</h1>
         <motion.img
-          className="message w-20 h-20 cursor-pointer"
+          className="message"
           style={{ y: messageY }}
           whileHover={{ scale: 1.2, rotate: 15 }}
           whileTap={{ scale: 0.9, rotate: -15, borderRadius: "10%" }}
@@ -31,7 +31,7 @@ function Hero() {
           alt="message"
         />
         <motion.img
-          className="search w-20 h-20 cursor-pointer"
+          className="search"
           style={{ y: searchY }}
           whileHover={{ scale: 1.2, rotate: -15 }}
           whileTap={{ scale: 0.9, rotate: 15, borderRadius: "10%" }}
@@ -41,8 +41,7 @@ function Hero() {
         />
 
         <p className="hero-p">
-          Search, compare, and reserve your favorite football fields in just a
-          few clicks!
+        Search, compare, and reserve football pitches based on location, price, and availability.
         </p>
         <form className="hero-form">
           <input
