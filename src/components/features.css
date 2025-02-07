@@ -32,6 +32,8 @@
 
 .span-h2 span {
   font-size: 34px;
+  max-width: 672px;
+  margin: 0 auto;
 }
 
 .span-other-h2 {
