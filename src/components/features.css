@@ -163,6 +163,22 @@ img {
   display: inline-flex;
 }
 
+.text-gif {
+  position: absolute;
+  bottom: 75%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  width: 160px;
+  height: 140px;
+  pointer-events: none;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.fea-span-incredible:hover .text-gif {
+  opacity: 1;
+}
+
 .fea-p {
   color: rgba(255, 255, 255, 0.5);
   margin-top: 8px;
@@ -183,6 +199,8 @@ img {
 }
 
 .fea-span-incredible {
+  position: relative;
+
   background: linear-gradient(to right, #c084fc, #f472b6);
   background-clip: text;
   color: transparent;
@@ -191,6 +209,17 @@ img {
 
 .other {
   display: block;
+}
+
+.fea-paragraph,
+.other {
+  transition: color 0.2s ease-in-out;
+}
+
+.component:hover .fea-paragraph,
+.component:hover .other {
+  color: rgb(179, 179, 179);
+  transition: color 0.2s ease-in-out;
 }
 
 .track-div {
@@ -245,9 +274,15 @@ img {
   border: 2px solid rgba(255, 255, 255, 0.15);
   border-radius: 30px;
   display: inline-flex;
-  padding: 2px 8px;
+  padding: 4px 10px;
   align-items: center;
   position: relative;
+  gap: 1px;
+  transition: transform 0.4s ease-in-out;
+}
+
+.div-key:hover {
+  transform: scale(1.03);
 }
 
 .div-design {
@@ -274,7 +309,7 @@ img {
 }
 
 .f-span {
-  font-size: 12px;
+  font-size: 1.2rem;
   font-weight: 500;
 }
 
@@ -303,7 +338,7 @@ img {
 
   .f-span {
     font-weight: 500;
-    font-size: 14px;
+    /* font-size: 16px; */
   }
 }
 
@@ -324,7 +359,7 @@ img {
 
   .f-span {
     font-weight: 500;
-    font-size: 22px;
+    /* font-size: 22px; */
   }
 
   .components {

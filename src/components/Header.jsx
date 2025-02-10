@@ -2,14 +2,15 @@ import React, { useState, useEffect } from "react";
 import ArrowRight from "../assets/right-arrow.svg";
 import Logo from "../assets/logo.svg";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-scroll";
 
 const navLinks = [
-  { label: "Home", href: "#" },
-  { label: "About", href: "#about" },
-  { label: "Features", href: "#features" },
-  { label: "Matches", href: "#matches" },
-  { label: "FAQs", href: "#faqs" },
-  { label: "Contact", href: "#contact" },
+  { label: "Home", to: "home" },
+  { label: "About", to: "about" },
+  { label: "Features", to: "features" },
+  { label: "Matches", to: "matches" },
+  { label: "FAQs", to: "faqs" },
+  { label: "Contact", to: "contact" },
 ];
 
 const boxVariants = {
@@ -19,6 +20,23 @@ const boxVariants = {
 
 function Header() {
   useEffect(() => {
+    const links = document.querySelectorAll("a[href^='#']");
+
+    const handleClick = (event) => {
+      event.preventDefault();
+      const targetId = event.currentTarget.getAttribute("href").substring(1);
+      const targetElement = document.getElementById(targetId);
+
+      if (targetElement) {
+        window.scrollTo({
+          top: targetElement.offsetTop - 50,
+          behavior: "smooth",
+        });
+      }
+    };
+
+    links.forEach((link) => link.addEventListener("click", handleClick));
+
     const handleResize = () => {
       if (window.innerWidth > 768) {
         setIsOpen(false);
@@ -26,12 +44,17 @@ function Header() {
     };
 
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+
+    return () => {
+      links.forEach((link) => link.removeEventListener("click", handleClick));
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
   const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <header className="headerr">
+    <section id="home" className="headerr">
       <div className="header-text">
         <p className="top-text">
           Streamline your booking experience and enjoy hassle-free football
@@ -43,8 +66,6 @@ function Header() {
         </div>
       </div>
 
-      
-
       <div className="container">
         <div className={`nav-section ${isOpen ? "open" : ""}`}>
           <div variants={boxVariants} className="navbarr">
@@ -55,9 +76,14 @@ function Header() {
             <div className="div-navlink">
               <nav className="navlink">
                 {navLinks.map((link) => (
-                  <a href={link.href} key={link.label}>
+                  <Link
+                    to={link.to}
+                    smooth={true}
+                    duration={500}
+                    key={link.label}
+                  >
                     {link.label}
-                  </a>
+                  </Link>
                 ))}
               </nav>
             </div>
@@ -109,13 +135,16 @@ function Header() {
               >
                 <div className="menu-2-section">
                   {navLinks.map((link) => (
-                    <a
-                      href={link.href}
+                    <Link
+                      to={link.to}
+                      smooth={true}
+                      duration={500}
                       key={link.label}
                       className="navlink-menu"
+                      onClick={() => setIsOpen(false)}
                     >
                       {link.label}
-                    </a>
+                    </Link>
                   ))}
                   <motion.button
                     whileHover={{ scale: 0.95 }}
@@ -139,7 +168,7 @@ function Header() {
           </AnimatePresence>
         </div>
       </div>
-    </header>
+    </section>
   );
 }
 

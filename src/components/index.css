@@ -43,15 +43,14 @@ body {
     rgba(248, 154, 191, 1),
     rgba(252, 214, 255, 1)
   );
-  background-size: 300% 100%; /* Rənglərin daha rahat hərəkət etməsi üçün */
-  animation: gradientMove 13s linear infinite; /* 13 saniyəlik yavaş animasiya */
+  background-size: 300% 100%;
+  animation: gradientMove 13s linear infinite;
   text-shadow: 2px 2px 15px rgba(0, 0, 0, 0.6);
   color: rgb(255, 255, 255);
   padding: 12px;
   font-size: 14px;
   gap: 12px;
 }
-
 
 .right-arrow {
   height: 16px;
@@ -67,6 +66,11 @@ body {
   display: inline-flex;
   gap: 4px;
   align-items: center;
+}
+
+.header p:hover {
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .headerr {
@@ -127,6 +131,33 @@ body {
 .menu-section {
   overflow: hidden;
 }
+
+.navlink-menu {
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.navlink-menu:hover {
+  transform: scale(1.1);
+}
+
+.navlink-menu::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: white;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.navlink-menu:hover::after {
+  transform: scaleX(1);
+}
+
 
 .menu-2-section {
   display: flex;
@@ -190,6 +221,7 @@ body {
   gap: 24px;
   padding-right: 80px;
   font-weight: 500;
+  cursor: pointer;
 }
 
 .div-navlink {

@@ -22,7 +22,7 @@ function Introduction() {
   }, [wordIndex]);
 
   return (
-    <section className="intro-section">
+    <section id="about" className="intro-section">
       <div className="intro-container">
         <div className="intro-design">
           <div className="main-intro-layer">

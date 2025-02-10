@@ -11,6 +11,8 @@ import Clock from "../assets/clock.png";
 import NoteBook from "../assets/notebook.png";
 import Hash from "../assets/hash.png";
 
+import AnimationGif from "../assets/animation.gif";
+
 import Person1 from "../assets/person-1.png";
 import Person2 from "../assets/person-2.png";
 import Person3 from "../assets/person-3.png";
@@ -30,8 +32,8 @@ const features = [
 ];
 
 function Features() {
-  const offsetX = useMotionValue(0);
-  const offsetY = useMotionValue(0);
+  const offsetX = useMotionValue(-100);
+  const offsetY = useMotionValue(-100);
   const maskImage = useMotionTemplate`radial-gradient(100px 100px at ${offsetX}px ${offsetY}px, black, transparent)`;
   const border = useRef(null);
 
@@ -48,7 +50,7 @@ function Features() {
     };
   }, []);
   return (
-    <section className="fea-section">
+    <section id="features" className="fea-section">
       <div className="features-container">
         <div className="features-main-layer">
           <div className="features-layer">Features</div>
@@ -72,7 +74,11 @@ function Features() {
                 </div>
                 <div className="avatar4">
                   <div className="ava-class">
-                    <img className="person4-image" src={Person4} alt="Person 4" />
+                    <img
+                      className="person4-image"
+                      src={Person4}
+                      alt="Person 4"
+                    />
                     {Array.from({ length: 3 }).map((_, i) => (
                       <span className="fea-span" key={i}></span>
                     ))}
@@ -95,7 +101,14 @@ function Features() {
               <div className="second">
                 <p className="fea-paragraph">
                   We're achieving{" "}
-                  <span className="fea-span-incredible">incredible</span>{" "}
+                  <span className="fea-span-incredible">
+                    <span className="incredible-gif">incredible</span>
+                    <img
+                      className="text-gif"
+                      src={AnimationGif}
+                      alt="animation gif"
+                    />
+                  </span>{" "}
                   <span className="other">engagement</span>
                 </p>
               </div>
