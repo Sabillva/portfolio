@@ -12,14 +12,6 @@
 body {
   font-family: "Ravio Regular";
   background-color: black;
-  background-image: linear-gradient(
-    to bottom,
-    rgb(0, 0, 0),
-    rgba(46, 46, 46, 0.34),
-    rgba(75, 75, 75, 0.65),
-    rgba(46, 46, 46, 0.82),
-    rgb(0, 0, 0)
-  );
 }
 
 @keyframes gradientMove {
@@ -143,7 +135,7 @@ body {
 }
 
 .navlink-menu::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 0;
@@ -157,7 +149,6 @@ body {
 .navlink-menu:hover::after {
   transform: scaleX(1);
 }
-
 
 .menu-2-section {
   display: flex;
