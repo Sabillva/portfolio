@@ -1,4 +1,10 @@
-import { motion, useScroll, useTransform } from "framer-motion";
+import {
+  motion,
+  useMotionTemplate,
+  useMotionValue,
+  useScroll,
+  useTransform,
+} from "framer-motion";
 import React, { useState, useRef, useEffect } from "react";
 import Calendar from "../assets/calendar.png";
 import Clock from "../assets/clock.png";
@@ -24,6 +30,23 @@ const features = [
 ];
 
 function Features() {
+  const offsetX = useMotionValue(0);
+  const offsetY = useMotionValue(0);
+  const maskImage = useMotionTemplate`radial-gradient(100px 100px at ${offsetX}px ${offsetY}px, black, transparent)`;
+  const border = useRef(null);
+
+  useEffect(() => {
+    const updateMousePosition = (e) => {
+      if (!border.current) return;
+      const borderRect = border.current.getBoundingClientRect();
+      offsetX.set(e.x - borderRect?.x);
+      offsetY.set(e.y - borderRect?.y);
+    };
+    window.addEventListener("mousemove", updateMousePosition);
+    return () => {
+      window.removeEventListener("mousemove", updateMousePosition);
+    };
+  }, []);
   return (
     <section className="fea-section">
       <div className="features-container">
@@ -49,6 +72,7 @@ function Features() {
                 </div>
                 <div className="avatar4">
                   <div className="ava-class">
+                    <img className="person4-image" src={Person4} alt="Person 4" />
                     {Array.from({ length: 3 }).map((_, i) => (
                       <span className="fea-span" key={i}></span>
                     ))}
@@ -133,6 +157,14 @@ function Features() {
         <div className="features-map">
           {features.map((feature) => (
             <div key={feature} className="div-key">
+              <motion.div
+                className="div-design"
+                ref={border}
+                style={{
+                  WebkitMaskImage: maskImage,
+                  maskImage,
+                }}
+              ></motion.div>
               <span className="star-span">
                 <img className="hash" src={Hash} alt="hash" />
               </span>

@@ -19,8 +19,6 @@ function Hero() {
         animate={{ opacity: 1 }}
         transition={{ duration: 1.5 }}
         className="hero-container"
-        drag
-        dragSnapToOrigin
       >
         <h1 className="hero-h1">Find and Book Football Fields Easily</h1>
 
@@ -32,7 +30,6 @@ function Hero() {
           transition={{ type: "spring", stiffness: 200 }}
           src={Message}
           alt="message"
-          draggable="false"
         />
         <motion.img
           className="search"

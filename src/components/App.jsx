@@ -13,6 +13,7 @@ function App() {
       <LogoTicker />
       <Introduction />
       <Features />
+      <Introduction />
     </>
   );
 }
