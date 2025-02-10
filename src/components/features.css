@@ -122,6 +122,19 @@ img {
 
 .person4-image {
   position: absolute;
+  opacity: 0;
+  background-color: #171717;
+  border: transparent;
+  padding: 3px;
+  width: 70px;
+  height: 70px;
+  border: 4px solid rgb(100, 196, 76);
+  border-radius: 9999px;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.component:hover .person4-image {
+  opacity: 1;
 }
 
 .ava-class {
