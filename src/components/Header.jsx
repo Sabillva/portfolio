@@ -43,6 +43,8 @@ function Header() {
         </div>
       </div>
 
+      
+
       <div className="container">
         <div className={`nav-section ${isOpen ? "open" : ""}`}>
           <div variants={boxVariants} className="navbarr">

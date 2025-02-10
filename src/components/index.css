@@ -14,24 +14,36 @@ body {
   background-color: black;
 }
 
+@keyframes gradientMove {
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 .header-text {
   display: flex;
   justify-content: center;
   align-items: center;
   background-image: linear-gradient(
     to right,
-    rgba(252, 214, 255, 0.9),
+    rgba(252, 214, 255, 1),
     rgba(41, 216, 255, 1),
     rgba(255, 253, 128, 1),
     rgba(248, 154, 191, 1),
-    rgba(252, 214, 255, 0.9)
+    rgba(252, 214, 255, 1)
   );
+  background-size: 300% 100%; /* Rənglərin daha rahat hərəkət etməsi üçün */
+  animation: gradientMove 13s linear infinite; /* 13 saniyəlik yavaş animasiya */
   text-shadow: 2px 2px 15px rgba(0, 0, 0, 0.6);
   color: rgb(255, 255, 255);
   padding: 12px;
   font-size: 14px;
   gap: 12px;
 }
+
 
 .right-arrow {
   height: 16px;
