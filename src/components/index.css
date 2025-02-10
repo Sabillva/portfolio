@@ -215,6 +215,16 @@ body {
   cursor: pointer;
 }
 
+.navlink a:hover {
+  color: rgb(226, 226, 226);
+  transition: color 0.1s ease-in-out;
+
+}
+
+.logo {
+  cursor: pointer;
+}
+
 .div-navlink {
   display: flex;
   justify-content: center;

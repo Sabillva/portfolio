@@ -70,7 +70,9 @@ function Header() {
         <div className={`nav-section ${isOpen ? "open" : ""}`}>
           <div variants={boxVariants} className="navbarr">
             <div className="nav-item">
-              <img className="logo" src={Logo} alt="logo" />
+              <Link to="home" smooth={true} duration={500}>
+                <img className="logo" src={Logo} alt="logo" />
+              </Link>
             </div>
 
             <div className="div-navlink">

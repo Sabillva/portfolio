@@ -17,4 +17,6 @@ function App() {
   );
 }
 
+//navlink home sehifesine aparmir
+
 export default App;
