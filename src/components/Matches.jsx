@@ -69,7 +69,6 @@ function Matches() {
         </div>
 
         <div className="cards-match">
-
           <div className="stadiums-cards">
             {popularStaduims.map((stadium) => (
               <div key={stadium.title} className="titles">
@@ -109,8 +108,6 @@ function Matches() {
               </div>
             ))}
           </div>
-
-
         </div>
       </div>
     </section>
