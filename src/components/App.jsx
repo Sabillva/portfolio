@@ -4,6 +4,7 @@ import Hero from "./Hero.jsx";
 import LogoTicker from "./LogoTicker.jsx";
 import Introduction from "./Introduction.jsx";
 import Features from "./Features.jsx";
+import Matches from "./Matches.jsx";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <LogoTicker />
       <Introduction />
       <Features />
+      <Matches />
     </>
   );
 }

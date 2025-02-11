@@ -59,6 +59,8 @@ function Features() {
           <span>Streamlined solutions for your</span>
           <span className="span-other-h2">convenience.</span>
         </div>
+
+        
         <div className="components">
           <div className="component">
             <div className="children">

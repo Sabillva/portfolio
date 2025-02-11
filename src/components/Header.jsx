@@ -81,7 +81,7 @@ function Header() {
                   <Link
                     to={link.to}
                     smooth={true}
-                    duration={500}
+                    duration={700}
                     key={link.label}
                   >
                     {link.label}
