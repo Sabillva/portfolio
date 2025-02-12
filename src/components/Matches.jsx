@@ -70,40 +70,48 @@ function Matches() {
 
         <div className="cards-match">
           <div className="stadiums-cards">
-            {popularStaduims.map((stadium) => (
+            {popularStaduims.map((stadium, stadiumIndex) => (
               <div key={stadium.title} className="titles">
-                <div className="spans">
-                  <span>{stadium.place}</span>
-                  <span>&bull;</span>
-                  <span>{stadium.year}</span>
-                </div>
-                <h3 className="title-h3">{stadium.title}</h3>
-                <hr className="match-hr" />
-                <ul className="match-ul">
-                  {stadium.results.map((result) => (
-                    <li className="match-li">
-                      <img className="check-img" src={CheckIcon} alt="check" />
-                      <span>{result.title}</span>
-                    </li>
-                  ))}
-                </ul>
-                <a href={stadium.link}>
-                  <motion.button
-                    whileHover={{ scale: 0.95 }}
-                    whileTap={{ scale: 0.9 }}
-                    transition={{ duration: 0.3 }}
-                    className="match-button"
-                  >
-                    <span>Visit Live Site</span>
-                    <img
-                      className="right-arrow-2"
-                      src={ArrowRight}
-                      alt="right arrow"
-                    />
-                  </motion.button>
-                </a>
-                <div className="image-div">
-                  <img src={stadium.image} alt={stadium.title} />
+                <div className="cards-grid">
+                  <div className="lg-cards">
+                    <div className="spans">
+                      <span>{stadium.place}</span>
+                      <span>&bull;</span>
+                      <span>{stadium.year}</span>
+                    </div>
+                    <h3 className="title-h3">{stadium.title}</h3>
+                    <hr className="match-hr" />
+                    <ul className="match-ul">
+                      {stadium.results.map((result) => (
+                        <li className="match-li">
+                          <img
+                            className="check-img"
+                            src={CheckIcon}
+                            alt="check"
+                          />
+                          <span>{result.title}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <a href={stadium.link}>
+                      <motion.button
+                        whileHover={{ scale: 0.95 }}
+                        whileTap={{ scale: 0.9 }}
+                        transition={{ duration: 0.3 }}
+                        className="match-button"
+                      >
+                        <span>Visit Live Site</span>
+                        <img
+                          className="right-arrow-2"
+                          src={ArrowRight}
+                          alt="right arrow"
+                        />
+                      </motion.button>
+                    </a>
+                  </div>
+                  <div className="image-div">
+                    <img src={stadium.image} alt={stadium.title} />
+                  </div>
                 </div>
               </div>
             ))}

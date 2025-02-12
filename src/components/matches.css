@@ -55,6 +55,7 @@ body {
 }
 
 .titles {
+  top: 140px;
   background-color: #171717;
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 30px;
@@ -62,6 +63,7 @@ body {
   z-index: 0;
   overflow: hidden;
   padding: 32px 42px 0 42px;
+  position: sticky;
 }
 
 .titles::after {
@@ -96,13 +98,14 @@ body {
 
 .image-div img {
   border-radius: 30px 30px 0 0;
-  width: 100%; /* responsivlik deyisir*/
-  height: 40vw;
+  width: 100%;
   margin-bottom: -1rem;
+  height: 220px;
+  object-fit: cover;
 }
 
 .title-h3 {
-  font-size: 24px;
+  font-size: 28px;
   line-height: 32px;
   margin-top: 16px;
 }
@@ -203,8 +206,15 @@ hr {
     height: 24px;
   }
 
-  .match-button{
+  .match-button {
     width: auto;
+  }
+
+  .image-div img {
+    margin-bottom: 0;
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
   }
 }
 
@@ -219,5 +229,57 @@ hr {
 
   .cards-match {
     padding: 50px;
+  }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 64px;
+  }
+
+  .image-div img {
+    border-radius: 30px 0 0 0;
+    margin-top: 32px;
+    width: 100%;
+    height: 410px;
+    object-fit: cover;
+  }
+
+  .stadiums-cards {
+    margin-top: 80px;
+  }
+
+  .titles {
+    padding: 64px 0 0 80px;
+  }
+
+  .lg-cards {
+    padding-bottom: 64px;
+  }
+
+  .title-h3 {
+    font-size: 42px;
+    margin-top: 24px;
+  }
+
+  .match-hr {
+    margin-top: 24px;
+  }
+
+  .match-li {
+    font-size: 18px;
+  }
+
+  .match-ul {
+    margin-top: 28px;
+  }
+
+  .check-img {
+    width: 26px;
+    height: 26px;
+  }
+
+  .match-button {
+    width: 100%;
   }
 }
