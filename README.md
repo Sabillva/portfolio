@@ -56,6 +56,8 @@ CI/CD - Automated deployment pipeline
 
 🔄 System Architecture
 
+Higher level diagram is shared in repository.
+
 1️⃣ User Flow:
 
 Users register and log in.
@@ -90,4 +92,3 @@ The user gets an email informing them that the slot is now available.
 MIT License. Feel free to use and contribute! 🎉
 
 💡 Looking for a specific UML diagram or feature breakdown? Let me know! 🚀
-
