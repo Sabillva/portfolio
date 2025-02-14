@@ -60,7 +60,6 @@ function Features() {
           <span className="span-other-h2">convenience.</span>
         </div>
 
-        
         <div className="components">
           <div className="component">
             <div className="children">
