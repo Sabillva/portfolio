@@ -8,6 +8,7 @@ import Matches from "./Matches.jsx";
 import Testimonials from "./Testimonials.jsx";
 import Faqs from "./Faqs.jsx";
 import Words from "./Words.jsx";
+import Contact from "./Contact.jsx";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
       <Words />
       <Testimonials />
       <Faqs />
+      <Contact />
     </>
   );
 }

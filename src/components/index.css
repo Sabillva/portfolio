@@ -105,6 +105,7 @@ body {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
+  z-index: 0;
 }
 
 .nav-section {
@@ -174,6 +175,7 @@ body {
   padding: 0 24px;
   font-weight: 500;
   display: none;
+  cursor: pointer;
 }
 
 .signup {
@@ -191,6 +193,7 @@ body {
   align-items: center;
   justify-content: center;
   display: none;
+  cursor: pointer;
 }
 
 .signup:hover {
@@ -214,6 +217,7 @@ body {
   border-radius: 9999px;
   padding: 0 24px;
   font-weight: 500;
+  cursor: pointer;
 }
 
 .signup-menu {
@@ -230,6 +234,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 
 .signup-menu:hover {
@@ -251,6 +256,7 @@ body {
   padding-right: 80px;
   font-weight: 500;
   cursor: pointer;
+  z-index: 1;
 }
 
 .navlink a:hover {

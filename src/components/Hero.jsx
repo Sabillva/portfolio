@@ -45,22 +45,6 @@ function Hero() {
           Search, compare, and reserve football pitches based on location,
           price, and availability.
         </p>
-        <form className="hero-form">
-          <input
-            type="email"
-            placeholder="Enter your email"
-            className="hero-input"
-          />
-          <motion.button
-            whileHover={{ scale: 0.95 }}
-            whileTap={{ scale: 0.9 }}
-            transition={{ duration: 0.3 }}
-            className="hero-signup"
-            type="submit"
-          >
-            Sign Up
-          </motion.button>
-        </form>
       </motion.div>
     </section>
   );
