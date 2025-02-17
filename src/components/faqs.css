@@ -25,22 +25,22 @@ body {
 
 .f-h3 {
   font-weight: 500;
+  font-size: 16px;
 }
 
 .faq-p-main {
-  /* margin-top: 24px; */
   overflow: hidden;
 }
 
 .faq-p {
   color: rgba(177, 177, 177, 0.8);
+  font-size: 13px;
 }
 
 .faqs-cards {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  /* margin-top: 48px; */
   max-width: 576px;
   margin: 48px auto;
 }
@@ -52,4 +52,24 @@ body {
 
 .select-class.rotate {
   transform: rotate(45deg);
+}
+
+@media (min-width: 768px) and (max-width: 1224px) {
+  .f-h3 {
+    font-size: 18px;
+  }
+
+  .faq-p {
+    font-size: 15px;
+  }
+}
+
+@media (min-width: 1224px) {
+  .f-h3 {
+    font-size: 19px;
+  }
+
+  .faq-p {
+    font-size: 16px;
+  }
 }

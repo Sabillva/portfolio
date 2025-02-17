@@ -57,7 +57,7 @@
 }
 
 .hero-form:focus-within {
-  border: 2px solid rgb(96, 96, 96); /* Fokuslandıqda sərhəd ağ olsun */
+  border: 2px solid rgb(96, 96, 96);
 }
 
 
