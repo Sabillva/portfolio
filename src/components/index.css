@@ -178,13 +178,32 @@ body {
 
 .signup {
   border: none;
-  background-color: #ffffff;
+  background: linear-gradient(145deg, #4de840, #2ca322);
   color: rgb(0, 0, 0);
   height: 40px;
   border-radius: 9999px;
   padding: 0 24px;
   font-weight: 500;
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2),
+    -1px -1px 10px rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   display: none;
+}
+
+.signup:hover {
+  background: linear-gradient(80deg, #4de840, #2ca322);
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3),
+    -1px -1px 10px rgba(255, 255, 255, 0.3);
+}
+
+.signup:active {
+  background: linear-gradient(145deg, #2ca322, #4de840);
+  box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.3),
+    inset -1px -1px 6px rgba(255, 255, 255, 0.3);
+  transform: scale(0.95);
 }
 
 .login-menu {
@@ -199,12 +218,31 @@ body {
 
 .signup-menu {
   border: none;
-  background-color: #ffffff;
+  background: linear-gradient(145deg, #4de840, #2ca322);
   color: rgb(0, 0, 0);
   height: 40px;
   border-radius: 9999px;
   padding: 0 24px;
   font-weight: 500;
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2),
+    -1px -1px 10px rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.signup-menu:hover {
+  background: linear-gradient(80deg, #4de840, #2ca322);
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3),
+    -1px -1px 10px rgba(255, 255, 255, 0.3);
+}
+
+.signup-menu:active {
+  background: linear-gradient(145deg, #2ca322, #4de840);
+  box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.3),
+    inset -1px -1px 6px rgba(255, 255, 255, 0.3);
+  transform: scale(0.95);
 }
 
 .navlink {
