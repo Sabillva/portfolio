@@ -1,7 +1,54 @@
+body {
+  color: white;
+}
+
 .faqs-section {
   padding: 96px 0;
 }
 
 .faqs-container {
   margin: 0 40px;
+}
+
+.faq-item {
+  background-color: #171717;
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 24px;
+}
+
+.faq-h3 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.f-h3 {
+  font-weight: 500;
+}
+
+.faq-p-main {
+  margin-top: 24px;
+}
+
+.faq-p {
+  color: rgba(177, 177, 177, 0.8);
+}
+
+.faqs-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  /* margin-top: 48px; */
+  max-width: 576px;
+  margin: 48px auto;
+}
+.select-class {
+  color: #a3e635;
+  flex-shrink: 0;
+  transition: transform 0.3s ease-in-out;
+}
+
+.select-class.rotate {
+  transform: rotate(45deg);
 }

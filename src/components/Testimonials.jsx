@@ -139,10 +139,10 @@ function Testimonials() {
               <TestimonialsColumn testimonials={firstColumn} duration={15} />
             </div>
             <div className="style-columns">
-              <TestimonialsColumn testimonials={secondColumn} duration={19} />
+              <TestimonialsColumn testimonials={secondColumn} duration={24} />
             </div>
             <div className="style-columnss">
-              <TestimonialsColumn testimonials={thirdColumn} duration={19} />
+              <TestimonialsColumn testimonials={thirdColumn} duration={17} />
             </div>
           </div>
         </div>
