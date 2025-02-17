@@ -28,7 +28,8 @@ body {
 }
 
 .faq-p-main {
-  margin-top: 24px;
+  /* margin-top: 24px; */
+  overflow: hidden;
 }
 
 .faq-p {

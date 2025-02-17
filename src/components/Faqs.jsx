@@ -4,6 +4,7 @@ import {
   useMotionValue,
   useScroll,
   useTransform,
+  AnimatePresence,
 } from "framer-motion";
 import React, { useState, useRef, useEffect } from "react";
 
@@ -36,7 +37,7 @@ const faqs = [
 ];
 
 function Faqs() {
-  const selectedIndex = 0;
+  const [selectedIndex, setSelectedIndex] = useState(0);
   return (
     <section id="faqs" className="faqs-section">
       <div className="faqs-container">
@@ -50,7 +51,10 @@ function Faqs() {
         <div className="faqs-cards">
           {faqs.map((faq, faqIndex) => (
             <div key={faq.question} className="faq-item">
-              <div className="faq-h3">
+              <div
+                className="faq-h3"
+                onClick={() => setSelectedIndex(faqIndex)}
+              >
                 <h3 className="f-h3">{faq.question}</h3>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -70,17 +74,19 @@ function Faqs() {
                   <line x1="5" y1="12" x2="19" y2="12"></line>
                 </svg>
               </div>
-              {selectedIndex === faqIndex && (
-                <motion.div
-                  className="faq-p-main"
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <p className="faq-p">{faq.answer}</p>
-                </motion.div>
-              )}
+              <AnimatePresence>
+                {selectedIndex === faqIndex && (
+                  <motion.div
+                    className="faq-p-main"
+                    initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                    animate={{ opacity: 1, height: "auto", marginTop: 24 }}
+                    exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <p className="faq-p">{faq.answer}</p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           ))}
         </div>
