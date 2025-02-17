@@ -50,7 +50,7 @@ function Faqs() {
         </div>
         <div className="faqs-cards">
           {faqs.map((faq, faqIndex) => (
-            <div key={faq.question} className="faq-item">
+            <div key={faq.question} className={`faq-item ${selectedIndex === faqIndex ? "active" : ""}`}>
               <div
                 className="faq-h3"
                 onClick={() => setSelectedIndex(faqIndex)}

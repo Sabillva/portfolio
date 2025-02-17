@@ -17,6 +17,12 @@ body {
   padding: 24px;
 }
 
+.faq-item.active {
+  background-color: #212121;
+  border-color: rgba(209, 209, 209, 0.3);
+  transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+}
+
 .faq-h3 {
   display: flex;
   justify-content: space-between;
