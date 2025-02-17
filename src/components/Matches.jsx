@@ -64,7 +64,7 @@ function Matches() {
             <span>Explore the best stadiums</span>
           </div>
           <p className="description-p">
-            Discover top-rated football stadiums, perfect for your next matchks
+            Discover top-rated football stadiums, perfect for your next matchs
           </p>
         </div>
 

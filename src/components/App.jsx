@@ -7,6 +7,7 @@ import Features from "./Features.jsx";
 import Matches from "./Matches.jsx";
 import Testimonials from "./Testimonials.jsx";
 import Faqs from "./Faqs.jsx";
+import Words from "./Words.jsx";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
       <Introduction />
       <Features />
       <Matches />
+      <Words />
       <Testimonials />
       <Faqs />
     </>

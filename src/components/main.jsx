@@ -8,6 +8,7 @@ import "./features.css";
 import "./matches.css";
 import "./testimonials.css";
 import "./faqs.css";
+import "./words.css";
 import App from "./App.jsx";
 
 createRoot(document.getElementById("root")).render(
