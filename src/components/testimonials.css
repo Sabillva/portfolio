@@ -1,5 +1,5 @@
 body {
-  color: white;
+  color: #fffce1;
 }
 
 .user-section {
@@ -18,7 +18,7 @@ body {
   display: inline-flex;
   border: 2px solid rgb(141, 242, 113);
   gap: 8px;
-  color: rgb(228, 255, 220);
+  color: #fffce1;
   padding: 4px 12px;
   border-radius: 9999px;
   text-transform: uppercase;
@@ -34,7 +34,7 @@ body {
 .style-h2-user {
   margin: 48px 20px 0 20px;
   font-weight: 500;
-  color: white;
+  color: #fffce1;
   text-align: center;
 }
 
@@ -59,6 +59,7 @@ body {
   box-shadow: 0 7px 14px rgba(89, 89, 89, 0.7);
   max-width: 20rem;
   width: 100%;
+  color: #fffce1;
 }
 
 .user-img {
@@ -113,15 +114,15 @@ body {
   -webkit-mask-image: linear-gradient(
     to bottom,
     transparent,
-    black 25%,
-    black 75%,
+    rgb(14, 16, 15) 25%,
+    rgb(14, 16, 15) 75%,
     transparent
   );
   mask-image: linear-gradient(
     to bottom,
     transparent,
-    black 25%,
-    black 75%,
+    rgb(14, 16, 15) 25%,
+    rgb(14, 16, 15) 75%,
     transparent
   );
   max-height: 538px;

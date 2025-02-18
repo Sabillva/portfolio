@@ -12,7 +12,7 @@
 }
 
 .span-design {
-  color: white;
+  color: #fffce1;
   transition: color 0.7s ease, font-weight 0.3s ease;
 }
 
@@ -20,7 +20,7 @@
   display: inline-flex;
   border: 2px solid rgb(141, 242, 113);
   gap: 8px;
-  color: rgb(228, 255, 220);
+  color: #fffce1;
   padding: 4px 12px;
   border-radius: 9999px;
   text-transform: uppercase;
@@ -37,7 +37,7 @@
   margin: 48px 20px 0 20px;
   font-size: 34px;
   font-weight: 500;
-  color: white;
+  color: #fffce1;
   text-align: center;
 }
 

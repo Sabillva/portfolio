@@ -10,7 +10,7 @@
   display: inline-flex;
   border: 2px solid rgb(141, 242, 113);
   gap: 8px;
-  color: rgb(228, 255, 220);
+  color: #fffce1;
   padding: 4px 12px;
   border-radius: 9999px;
   text-transform: uppercase;
@@ -26,7 +26,7 @@
 .span-h2 {
   margin: 48px 20px 0 20px;
   font-weight: 500;
-  color: white;
+  color: #fffce1;
   text-align: center;
 }
 
@@ -57,7 +57,7 @@
 }
 
 .fea-h3 {
-  color: white;
+  color: #fffce1;
   font-size: 30px;
   font-weight: 500;
   margin-top: 30px;
@@ -159,7 +159,7 @@
   width: 6px;
   height: 6px;
   border-radius: 9999px;
-  background-color: white;
+  background-color: #fffce1;
   display: inline-flex;
 }
 
@@ -218,7 +218,7 @@
 
 .component:hover .fea-paragraph,
 .component:hover .other {
-  color: rgb(179, 179, 179);
+  color: rgba(255, 252, 225, 0.7);
   transition: color 0.2s ease-in-out;
 }
 
@@ -260,7 +260,7 @@
 }
 
 .features-map {
-  color: white;
+  color: #fffce1;
   margin-top: 32px;
   display: flex;
   flex-wrap: wrap;
@@ -291,7 +291,7 @@
   right: 0;
   bottom: 0;
   left: 0;
-  border: 2px solid rgb(220, 255, 221);
+  border: 2px solid #fffce1;
   border-radius: 30px;
 }
 

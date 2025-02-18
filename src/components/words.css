@@ -1,5 +1,5 @@
 body {
-  color: white;
+  color: #fffce1;
 }
 
 .words-section {
@@ -8,7 +8,6 @@ body {
 
 .words-h2 {
   font-size: 54px;
-  /* font-weight: 500; */
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -16,6 +15,7 @@ body {
 
 .words-span-1 {
   white-space: nowrap;
+  color: #fffce1;
 }
 
 .words-span-2 {

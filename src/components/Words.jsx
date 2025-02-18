@@ -19,7 +19,7 @@ function Words() {
             x: transformTop,
           }}
         >
-          Some nice words from our past clients
+          Some nice feedbacks from our dear users
         </motion.span>
         <motion.span
           className="words-span-2"
@@ -27,7 +27,7 @@ function Words() {
             x: transformBottom,
           }}
         >
-          Some nice words from our past clients
+          Some nice feedbacks from our dear users
         </motion.span>
       </h2>
     </section>

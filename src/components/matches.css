@@ -1,5 +1,5 @@
 body {
-  color: white;
+  color: #fffce1;
 }
 
 .header-match {
@@ -14,7 +14,7 @@ body {
   display: inline-flex;
   border: 2px solid rgb(141, 242, 113);
   gap: 8px;
-  color: rgb(228, 255, 220);
+  color: #fffce1;
   padding: 4px 12px;
   border-radius: 9999px;
   text-transform: uppercase;
@@ -30,7 +30,7 @@ body {
 .style-h2 {
   margin: 48px 20px 0 20px;
   font-weight: 500;
-  color: white;
+  color: #fffce1;
   text-align: center;
 }
 
@@ -88,6 +88,7 @@ body {
   font-size: 14px;
   line-height: 1.25rem;
   gap: 8px;
+  color: #fffce1;
 }
 
 .image-div {
@@ -108,6 +109,7 @@ body {
   font-size: 28px;
   line-height: 32px;
   margin-top: 16px;
+  color: #fffce1;
 }
 
 .match-hr {
@@ -116,7 +118,7 @@ body {
 }
 
 hr {
-  border: rgb(255, 255, 255);
+  border: #fffce1;
 }
 
 .check-img {
@@ -144,7 +146,7 @@ hr {
 .match-button {
   margin: 32px 0;
   border: none;
-  background-color: #ffffff;
+  background-color: #fffce1;
   color: rgb(0, 0, 0);
   width: 100%;
   height: 40px;
