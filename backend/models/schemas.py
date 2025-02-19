@@ -34,22 +34,22 @@ class TokenData(BaseModel):
     role: Optional[str] = None
 
 # --- Stadium Owner Application Schemas ---
-class StadiumApplication(BaseModel):
+class OwnerApplicationCreate(BaseModel):
     email: EmailStr
     stadium_name: str
     location: str
     contact_number: str
     other_details: Optional[str] = None
 
-class StadiumApplicationResponse(BaseModel):
-    email: str
+class OwnerApplicationResponse(BaseModel):
+    id: int
+    email: EmailStr
     stadium_name: str
     location: str
     contact_number: str
     other_details: Optional[str] = None
     status: str
+    created_at: datetime
 
-class OwnerApproval(BaseModel):
-    email: EmailStr
-    approved: bool
-    message: Optional[str] = None
+    class Config:
+        from_attributes = True

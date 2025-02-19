@@ -5,15 +5,12 @@ from sqlalchemy.orm import Session
 
 from backend.auth.dependencies import get_current_user
 from backend.database import get_db
-from backend.models.models import AppUser
-from backend.models.schemas import UserCreate, UserResponse, Token, StadiumApplication
+from backend.models.models import Applicant, AppUser
+from backend.models.schemas import UserCreate, UserResponse, Token, OwnerApplicationCreate, OwnerApplicationResponse
 from backend.services.auth_service import AuthService
-from typing import Dict
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
-#It's memory that I store applications from users who want to be authenticated as owner.
-pending_applications: Dict[str, StadiumApplication] = {}
 
 
 @router.post("/register", response_model=UserResponse)
@@ -32,46 +29,70 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
         )
     return AuthService.create_token(user)
 
+
 @router.post("/apply-owner")
-def apply_for_owner(application: StadiumApplication):
-    pending_applications[application.email] = application
+def apply_for_owner(
+    application: OwnerApplicationCreate,
+    db: Session = Depends(get_db),
+):
+    existing_application = db.query(Applicant).filter(Applicant.email == application.email).first()
+    if existing_application:
+        raise HTTPException(status_code=400, detail="Application already submitted")
+
+    new_application = Applicant(
+        email=application.email,
+        stadium_name=application.stadium_name,
+        location=application.location,
+        contact_number=application.contact_number,
+        other_details=application.other_details,
+        status="pending"
+    )
+    db.add(new_application)
+    db.commit()
     return {"message": "Your application is under review"}
 
 
-
-@router.get("/pending-owners", dependencies=[Depends(get_current_user)])
-def get_pending_owners(current_user: AppUser = Security(get_current_user, scopes=["admin"])):
-    return list(pending_applications.values())  # Return a list of applications
+@router.get("/pending-owners")
+def get_pending_owners(
+    current_user: AppUser = Security(get_current_user, scopes=["admin"]),
+    db: Session = Depends(get_db)
+):
+    pending_applications = db.query(Applicant).filter(Applicant.status == "pending").all()
+    return pending_applications
 
 
 @router.post("/approve-owner/{email}")
-def approve_owner(email: str, db: Session = Depends(get_db),
-                  current_user: AppUser = Security(get_current_user, scopes=["admin"])):
-    try:
-        with db.begin():
-            application = pending_applications.get(email)
-            if not application:
-                raise HTTPException(status_code=404, detail="Application not found")
+def approve_owner(
+    email: str,
+    current_user: AppUser = Security(get_current_user, scopes=["admin"]),
+    db: Session = Depends(get_db),
+):
+    application = db.query(Applicant).filter(Applicant.email == email, Applicant.status == "pending").first()
+    if not application:
+        raise HTTPException(status_code=404, detail="Application not found or already processed")
 
-            user = db.query(AppUser).filter(AppUser.email == email).first()
-            if not user:
-                raise HTTPException(status_code=404, detail="User not found")
 
-            user.is_owner = True
-            user.role = "owner"
+    user = db.query(AppUser).filter(AppUser.email == email).first()
+    if user:
+        user.role = "owner"
 
-            del pending_applications[email]
+    application.status = "approved"
 
-            return {"message": "User approved as stadium owner", "application": application}
-
-    except Exception as e:
-        print(f"Error approving owner: {e}")
-        raise HTTPException(status_code=500, detail="Error approving owner")
+    db.commit()
+    return {"message": "User approved as stadium owner"}
 
 
 
 @router.post("/reject-owner/{email}")
-def reject_owner(email: str, current_user: AppUser = Security(get_current_user, scopes=["admin"])):
-    if email in pending_applications:
-        del pending_applications[email]
+def reject_owner(
+    email: str,
+    current_user: AppUser = Security(get_current_user, scopes=["admin"]),
+    db: Session = Depends(get_db),
+):
+    application = db.query(Applicant).filter(Applicant.email == email).first()
+    if not application:
+        raise HTTPException(status_code=404, detail="Application not found")
+
+    db.delete(application)
+    db.commit()
     return {"message": "Application rejected"}

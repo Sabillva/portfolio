@@ -1,6 +1,4 @@
 from datetime import timedelta
-from fastapi import HTTPException
-from sqlalchemy import or_
 from sqlalchemy.orm import Session
 from typing import Optional
 
@@ -8,7 +6,7 @@ from dotenv import load_dotenv
 import os
 
 from backend.auth.utils import verify_password, get_password_hash, create_access_token
-from backend.models.models import AppUser
+from backend.models.models import Applicant, AppUser
 from backend.models.schemas import UserCreate, Token
 
 load_dotenv()
@@ -24,11 +22,31 @@ class AuthService:
 
     @staticmethod
     def create_user(db: Session, user: UserCreate) -> AppUser:
-        db_user = db.query(AppUser).filter(
-            or_(AppUser.email == user.email, AppUser.username == user.username)
+        approved_application = db.query(Applicant).filter(
+            Applicant.email == user.email, Applicant.status == "approved"
         ).first()
-        if db_user:
-            raise HTTPException(status_code=400, detail="Email or Username already registered")
+
+        # Hash password
+        hashed_password = get_password_hash(user.password)
+
+        if approved_application:
+            role = "owner"  # Auto-assign as owner
+            db.delete(approved_application)  # Remove from applicants table
+        else:
+            role = "user"
+
+        new_user = AppUser(
+            username=user.username,
+            email=user.email,
+            hashed_password=hashed_password,
+            role=role
+        )
+
+        db.add(new_user)
+        db.commit()
+        db.refresh(new_user)
+
+        return new_user
 
         hashed_password = get_password_hash(user.password)
         db_user = AppUser(
