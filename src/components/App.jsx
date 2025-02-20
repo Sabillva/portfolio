@@ -9,6 +9,7 @@ import Testimonials from "./Testimonials.jsx";
 import Faqs from "./Faqs.jsx";
 import Words from "./Words.jsx";
 import Contact from "./Contact.jsx";
+import Footer from "./Footer.jsx";
 
 function App() {
   return (
@@ -23,10 +24,9 @@ function App() {
       <Testimonials />
       <Faqs />
       <Contact />
+      <Footer />
     </>
   );
 }
-
-//navlink home sehifesine aparmir
 
 export default App;

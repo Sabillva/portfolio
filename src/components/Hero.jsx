@@ -13,7 +13,7 @@ function Hero() {
   const searchY = useTransform(scrollYProgress, [0, 1], ["0px", "-100px"]);
 
   return (
-    <section className="hero-section" ref={containerRef}>
+    <section id="home" className="hero-section" ref={containerRef}>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

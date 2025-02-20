@@ -54,7 +54,7 @@ function Header() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <section id="home" className="headerr">
+    <section className="headerr">
       <div className="header-text">
         <p className="top-text">
           Streamline your booking experience and enjoy hassle-free football
