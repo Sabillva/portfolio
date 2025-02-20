@@ -13,11 +13,24 @@
   font-size: 16px;
 }
 
+@keyframes pulseColor {
+  0% {
+    background-color: #2ca322;
+  }
+  50% {
+    background-color: lightgreen;
+  }
+  100% {
+    background-color: #2ca322;
+  }
+}
+
 .footer-div {
   width: 12px;
   height: 12px;
   border-radius: 9999px;
   background-color: #2ca322;
+  animation: pulseColor 1.5s infinite ease-in-out;
 }
 
 .footer-main-div {
