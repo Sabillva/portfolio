@@ -23,6 +23,25 @@ body {
   }
 }
 
+.svg-x {
+  position: fixed;
+  width: 100%;
+  z-index: 50;
+  display: flex;
+  justify-content: end;
+  align-items: end;
+  padding-right: 30px;
+}
+
+.close-btn {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.close-btn:hover {
+  transform: scale(1.03);
+}
+
 .header-text {
   display: flex;
   justify-content: center;

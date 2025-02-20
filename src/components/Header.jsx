@@ -18,6 +18,16 @@ const boxVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.8 } },
 };
 
+// document.querySelector(".close-btn").addEventListener("click", () => {
+//   const header = document.querySelector(".header-text");
+//   header.style.transform = "translateY(-100%)";
+//   header.style.transition = "transform 0.5s ease";
+//   window.scrollTo({
+//     top: 0,
+//     behavior: "smooth",
+//   });
+// });
+
 function Header() {
   useEffect(() => {
     const links = document.querySelectorAll("a[href^='#']");
@@ -63,6 +73,17 @@ function Header() {
         <div className="header">
           <p>Get started for free</p>
           <img className="right-arrow" src={ArrowRight} alt="right arrow" />
+        </div>
+        <div className="svg-x">
+          <svg
+            className="close-btn"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width="24"
+            height="24"
+          >
+            <path d="M19.071 4.929a1 1 0 0 0-1.414 0L12 10.586 5.343 3.929a1 1 0 0 0-1.414 1.414L10.586 12l-6.657 6.657a1 1 0 0 0 1.414 1.414L12 13.414l6.657 6.657a1 1 0 0 0 1.414-1.414L13.414 12l6.657-6.657a1 1 0 0 0 0-1.414z" />
+          </svg>
         </div>
       </div>
 
