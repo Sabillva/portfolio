@@ -18,15 +18,29 @@ const boxVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.8 } },
 };
 
-// document.querySelector(".close-btn").addEventListener("click", () => {
-//   const header = document.querySelector(".header-text");
-//   header.style.transform = "translateY(-100%)";
-//   header.style.transition = "transform 0.5s ease";
-//   window.scrollTo({
-//     top: 0,
-//     behavior: "smooth",
-//   });
-// });
+document.addEventListener("click", (event) => {
+  if (event.target.classList.contains("close-btn")) {
+    const header = document.querySelector(".header-text");
+    header.style.transform = "translateY(-100%)";
+    header.style.transition = "transform 0.5s ease";
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelector(".close-btn").addEventListener("click", () => {
+    const header = document.querySelector(".header-text");
+    header.style.transform = "translateY(-100%)";
+    header.style.transition = "transform 0.5s ease";
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  });
+});
 
 function Header() {
   useEffect(() => {
