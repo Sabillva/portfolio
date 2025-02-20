@@ -9,7 +9,7 @@
 }
 
 .footer-p-2 {
-  padding: 64px 40px 20px 40px;
+  padding: 44px 40px 20px 40px;
   font-size: 16px;
 }
 
@@ -97,7 +97,7 @@
 
 @media (min-width: 768px) and (max-width: 1224px) {
   .footer-h2 {
-    font-size: 72px;
+    font-size: 64px;
   }
 
   .footer-divs {
@@ -116,9 +116,16 @@
   }
 }
 
+@media (min-width: 768px) and (max-width: 1014px) {
+  .footer-h2 {
+    font-size: 58px;
+  }
+}
+
 @media (min-width: 1224px) {
   .footer-h2 {
-    font-size: 96px;
+    width: 96%;
+    font-size: 74px;
   }
 
   .footer-divs {
@@ -131,7 +138,7 @@
   }
 
   .footer-nav {
-    font-size: 32px;
+    font-size: 24px;
     align-items: end;
     margin-top: 0;
   }

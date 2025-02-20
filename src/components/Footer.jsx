@@ -90,12 +90,13 @@ function Footer() {
               <nav className="footer-nav">
                 {navItems.map((link) => (
                   <Link
+                    className="footer-a"
                     to={link.to}
                     smooth={true}
                     duration={700}
                     key={link.label}
                   >
-                    {link.label}
+                    <button className="footer-a-button">{link.label}</button>
                   </Link>
                 ))}
               </nav>
