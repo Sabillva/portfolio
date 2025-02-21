@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 
 # --- User Schemas ---
@@ -53,3 +53,21 @@ class OwnerApproval(BaseModel):
     email: EmailStr
     approved: bool
     message: Optional[str] = None
+
+# --- Tournament Schemas ---
+class TournamentBase(BaseModel):
+    description: str
+    places: List[str]
+    approximate_time: datetime
+
+class TournamentCreate(TournamentBase):
+    username: str
+
+class TournamentResponse(TournamentBase):
+    id: int
+    username: str
+    created_at: datetime
+    is_approved: bool
+
+    class Config:
+        orm_mode = True
