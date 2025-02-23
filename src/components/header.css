@@ -74,12 +74,14 @@ body {
 }
 
 .header {
+  z-index: 51;
   display: inline-flex;
   gap: 4px;
   align-items: center;
 }
 
 .header p:hover {
+  z-index: 51;
   text-decoration: underline;
   cursor: pointer;
 }
