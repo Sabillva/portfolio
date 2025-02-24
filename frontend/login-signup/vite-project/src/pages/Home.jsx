@@ -1,8 +1,8 @@
 import React from 'react'
 
-const Home = () =>{
+const Home = () => {
     return(
     <div className='text-3xl text-blue-500'>Home</div>
     )
 }
-export default Register
+export default Home;
