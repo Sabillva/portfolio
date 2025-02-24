@@ -1,6 +1,8 @@
 from datetime import datetime
 
 from sqlalchemy import Column, Integer, String, DateTime, Boolean
+from sqlalchemy.orm import relationship
+
 from backend.database import Base
 
 
@@ -15,3 +17,5 @@ class AppUser(Base):
     is_owner = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    stadiums = relationship("Stadium", back_populates="owner", cascade="all, delete")

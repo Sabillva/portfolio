@@ -1,19 +1,24 @@
-from pydantic import BaseModel, EmailStr
-from typing import Optional, List
 from datetime import datetime
+from typing import Optional
+
+from pydantic import BaseModel, EmailStr
+
 
 # --- User Schemas ---
 class UserBase(BaseModel):
     username: str
     email: EmailStr
 
+
 class UserCreate(UserBase):
     password: str
+
 
 class UserUpdate(BaseModel):
     username: Optional[str] = None
     email: Optional[EmailStr] = None
     password: Optional[str] = None
+
 
 class UserResponse(UserBase):
     id: int
@@ -24,14 +29,17 @@ class UserResponse(UserBase):
     class Config:
         from_attributes = True
 
+
 # --- Auth Schemas ---
 class Token(BaseModel):
     access_token: str
     token_type: str
 
+
 class TokenData(BaseModel):
     username: Optional[str] = None
     role: Optional[str] = None
+
 
 # --- Stadium Owner Application Schemas ---
 class StadiumApplication(BaseModel):
@@ -41,6 +49,7 @@ class StadiumApplication(BaseModel):
     contact_number: str
     other_details: Optional[str] = None
 
+
 class StadiumApplicationResponse(BaseModel):
     email: str
     stadium_name: str
@@ -49,23 +58,41 @@ class StadiumApplicationResponse(BaseModel):
     other_details: Optional[str] = None
     status: str
 
+
 class OwnerApproval(BaseModel):
     email: EmailStr
     approved: bool
     message: Optional[str] = None
 
+
+# --- Stadium Schemas ---
+class StadiumResponse(BaseModel):
+    id: int
+    name: str
+    location: str
+
+
 # --- Tournament Schemas ---
 class TournamentBase(BaseModel):
     description: str
-    places: List[str]
     approximate_time: datetime
+    stadium_id: int  # Single stadium ID (one-to-many relationship)
+
 
 class TournamentCreate(TournamentBase):
-    username: str
+    user_id: int  # The user creating the tournament
+
+
+class TournamentUpdate(BaseModel):
+    description: Optional[str] = None
+    approximate_time: Optional[datetime] = None
+    stadium_id: Optional[int] = None  # Allow updating the stadium ID
+
 
 class TournamentResponse(TournamentBase):
     id: int
-    username: str
+    user_id: int
+    stadium: StadiumResponse  # Include full stadium details
     created_at: datetime
     is_approved: bool
 

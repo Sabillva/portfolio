@@ -17,31 +17,33 @@ def get_all_tournaments(db: Session = Depends(get_db)):
 
 @router.post("/create", response_model=schemas.TournamentResponse)
 def create_tournament(tournament: schemas.TournamentCreate, db: Session = Depends(get_db),
-                      current_user: str = Depends(get_current_user)):
+                      current_user: AppUser = Depends(get_current_user)):
     return tournament_service.create_tournament(db=db, tournament=tournament, current_user=current_user)
 
 
 @router.put("/change/{tournament_id}", response_model=schemas.TournamentResponse)
-def update_tournament(tournament_id: int, tournament_update: schemas.TournamentBase, db: Session = Depends(get_db),
-                      current_user: str = Depends(get_current_user)):
+def update_tournament(tournament_id: int, tournament_update: schemas.TournamentUpdate, db: Session = Depends(get_db),
+                      current_user: AppUser = Depends(get_current_user)):
     return tournament_service.change_tournament(tournament_id=tournament_id, tournament_update=tournament_update, db=db,
                                                 current_user=current_user)
 
 
 @router.delete("/delete/{tournament_id}", response_model=schemas.TournamentResponse)
-def delete_tournament(tournament_id: int, db: Session = Depends(get_db), current_user: str = Depends(get_current_user)):
+def delete_tournament(tournament_id: int, db: Session = Depends(get_db),
+                      current_user: AppUser = Depends(get_current_user)):
     return tournament_service.delete_tournament(tournament_id=tournament_id, db=db, current_user=current_user)
 
 
-@router.post("/admin/approve/{tournament_id}", response_model=schemas.TournamentResponse)
+@router.post("/owner/approve/{tournament_id}", response_model=schemas.TournamentResponse)
 def approve_tournament(
         tournament_id: int,
         approve: bool,
         db: Session = Depends(get_db),
-        current_user: AppUser = Security(get_current_user, scopes=["admin"])
+        current_user: AppUser = Security(get_current_user, scopes=["owner"])
 ):
     return tournament_service.approve_tournament(
         tournament_id=tournament_id,
         db=db,
-        approve=approve
+        approve=approve,
+        current_user=current_user  # Pass the current user
     )
