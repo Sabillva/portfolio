@@ -15,5 +15,5 @@ class Stadium(Base):
 
     # Reverse relationship: One stadium can have many tournaments
     tournaments = relationship("Tournament", back_populates="stadium", cascade="all, delete")
-
-    owner = relationship("User", back_populates="stadiums")
+    posts = relationship("Post", back_populates="stadium", cascade="all, delete")
+    owner = relationship("AppUser", back_populates="stadiums")

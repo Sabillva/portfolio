@@ -19,3 +19,6 @@ class AppUser(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     stadiums = relationship("Stadium", back_populates="owner", cascade="all, delete")
+    posts = relationship("Post", back_populates="user", cascade="all, delete")
+    comments = relationship("Comment", back_populates="user", cascade="all, delete")
+    likes = relationship("Like", back_populates="user", cascade="all, delete")
