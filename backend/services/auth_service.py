@@ -60,10 +60,19 @@ class AuthService:
         return db_user
 
     @staticmethod
-    def create_token(user: AppUser) -> Token:
-        access_token_expires = timedelta(minutes=int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30)))
-        access_token = create_access_token(
-            data={"sub": user.username, "role": user.role},
-            expires_delta=access_token_expires
-        )
+    def create_token(user: AppUser, unexpiring: bool = False) -> Token:
+        if unexpiring and user.role == "admin":
+            access_token = create_access_token(
+                data={"sub": user.username, "role": user.role},
+                expires_delta=None  # No expiration
+            )
+        else:
+            access_token_expires = timedelta(
+                minutes=int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30))
+            )
+            access_token = create_access_token(
+                data={"sub": user.username, "role": user.role},
+                expires_delta=access_token_expires
+            )
+
         return Token(access_token=access_token, token_type="bearer")

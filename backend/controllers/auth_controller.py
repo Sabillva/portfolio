@@ -27,6 +27,10 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
+
+    if user.role == "admin":
+        return AuthService.create_token(user, unexpiring=True)
+
     return AuthService.create_token(user)
 
 
