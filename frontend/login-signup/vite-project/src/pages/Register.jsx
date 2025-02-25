@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import {Link, useNavigate} from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
 const Register = () => {
@@ -11,16 +11,16 @@ const Register = () => {
     const navigate = useNavigate()
 
     const handleChanges = (e) => {
-        setValues({...values, [e.target.name]:e.target.value})
+        setValues({ ...values, [e.target.name]: e.target.value })
     }
-    const handleSumbit = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
         try {
             const response = await axios.post('http://localhost:3000/auth/register', values)
-            if(response.status === 201) {
+            if (response.status === 201) {
                 navigate('/login')
             }
-        } catch(err) {
+        } catch (err) {
             console.log(err.message)
         }
     }
@@ -28,7 +28,7 @@ const Register = () => {
     <div className='flex justify-center items-center h-screen'>
         <div className='shadow-lg px-8 py-5 border w-72'>
             <h2 className='text-lg font-bold mb-4'>Register</h2>
-            <form onSubmit={handleSumbit}>
+            <form onSubmit={handleSubmit}> {/* Fixed typo here */}
                 <div className="mb-4">
                     <label htmlFor="username" className='block text-gray-700'>Username</label>
                     <input type="text" placeholder='Enter Username' className='w-full px-3 py-2 border'
