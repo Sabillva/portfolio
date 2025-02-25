@@ -2,9 +2,9 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from controllers.auth_controller import router as auth_router
-from backend.database import Base, engine
+from backend.database import Base_Model, engine
 
-Base.metadata.create_all(bind=engine)
+Base_Model.metadata.create_all(bind=engine)
 
 app = FastAPI()
 

@@ -1,10 +1,8 @@
-from datetime import datetime
-
-from sqlalchemy import Column, Integer, String, DateTime, Boolean, Enum
-from backend.database import Base
+from sqlalchemy import Column, Integer, String, Boolean, Text, Float, JSON, Enum
+from backend.database import Base_Model
 
 
-class AppUser(Base):
+class AppUser(Base_Model):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -13,19 +11,68 @@ class AppUser(Base):
     hashed_password = Column(String(255))
     role = Column(String(50), default="user")
     is_owner = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-class Applicant(Base):
+class Applicant(Base_Model):
     __tablename__ = "applicants"
 
     id = Column(Integer, primary_key=True, index=True)
-    email = Column(String(100), unique=True, index=True)
-    stadium_name = Column(String(100), nullable=False)
-    location = Column(String(100), nullable=False)
-    contact_number = Column(String(100), nullable=False)
-    other_details = Column(String(100), nullable=True)
+    email = Column(String(100), unique=True, index=True, nullable=False)  # Owner's email
+
+    stadium_name = Column(String(150), nullable=False)
+    location = Column(Text, nullable=False)  # Increased for better address support
+    latitude = Column(Float, nullable=False)
+    longitude = Column(Float, nullable=False)
+
+    contact_number = Column(String(20), nullable=False)
+    website = Column(String(255), nullable=True)
+
+    pitch_type = Column(String(50), nullable=False)
+    pitch_dimensions = Column(String(50), nullable=True)
+    number_of_pitches = Column(Integer, nullable=True)
+    lighting = Column(Boolean, nullable=False)
+    indoor_outdoor = Column(String(20), nullable=False)
+    fencing = Column(Boolean, nullable=False)
+    changing_rooms = Column(Boolean, nullable=False)
+    showers = Column(Boolean, nullable=False)
+    parking = Column(Boolean, nullable=False)
+    seating_area = Column(Boolean, nullable=False)
+    equipment_rental = Column(String(255), nullable=True)
+    opening_hours = Column(Text, nullable=False)
+    pricing = Column(Text, nullable=False)
+    cafe = Column(Boolean, nullable=False)
+    pitch_photos = Column(JSON, nullable=True)  # List of image URLs
+    other_details = Column(Text, nullable=True)
     status = Column(Enum("pending", "approved", name="application_status"), default="pending")
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+class Stadium(Base_Model):
+    __tablename__ = "stadiums"
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String(100), unique=True, index=True, nullable=False)  # Owner's email
+    owner = Column(String(100), unique=True, index=True, nullable=False)  # Owner's username
+
+    stadium_name = Column(String(150), nullable=False)
+    location = Column(Text, nullable=False)  # Increased for better address support
+    latitude = Column(Float, nullable=False)
+    longitude = Column(Float, nullable=False)
+
+    contact_number = Column(String(20), nullable=False)
+    website = Column(String(255), nullable=True)
+
+    pitch_type = Column(String(50), nullable=False)
+    pitch_dimensions = Column(String(50), nullable=True)
+    number_of_pitches = Column(Integer, nullable=True)
+    lighting = Column(Boolean, nullable=False)
+    indoor_outdoor = Column(String(20), nullable=False)
+    fencing = Column(Boolean, nullable=False)
+    changing_rooms = Column(Boolean, nullable=False)
+    showers = Column(Boolean, nullable=False)
+    parking = Column(Boolean, nullable=False)
+    seating_area = Column(Boolean, nullable=False)
+    equipment_rental = Column(String(255), nullable=True)
+    opening_hours = Column(Text, nullable=False)
+    pricing = Column(Text, nullable=False)
+    cafe = Column(Boolean, nullable=False)
+    pitch_photos = Column(JSON, nullable=True)  # List of image URLs
+    other_details = Column(Text, nullable=True)
 

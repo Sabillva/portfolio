@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 
 # --- User Schemas ---
@@ -38,17 +38,54 @@ class OwnerApplicationCreate(BaseModel):
     email: EmailStr
     stadium_name: str
     location: str
+    latitude: float
+    longitude: float
     contact_number: str
+    website: Optional[str] = None
+    pitch_type: str
+    pitch_dimensions: str
+    number_of_pitches: Optional[int] = None
+    fencing: bool
+    lighting: bool
+    indoor_outdoor: str
+    fencing: bool
+    changing_rooms: bool
+    showers: bool
+    parking: bool
+    seating_area: bool
+    equipment_rental: Optional[str] = None
+    opening_hours: str
+    pricing: float
+    cafe: bool
+    pitch_photos: Optional[List[str]] = None  # List of image URLs
     other_details: Optional[str] = None
+
 
 class OwnerApplicationResponse(BaseModel):
     id: int
     email: EmailStr
     stadium_name: str
     location: str
+    latitude: float
+    longitude: float
     contact_number: str
+    website: Optional[str] = None
+    pitch_type: str
+    pitch_dimensions: str
+    number_of_pitches: Optional[int] = None
+    lighting: bool
+    indoor_outdoor: str
+    fencing: bool
+    changing_rooms: bool
+    showers: bool
+    parking: bool
+    seating_area: bool
+    equipment_rental: Optional[str] = None
+    opening_hours: str
+    pricing: float
+    cafe: bool
+    pitch_photos: List[str] = None  # List of image URLs
     other_details: Optional[str] = None
-    status: str
     created_at: datetime
 
     class Config:
