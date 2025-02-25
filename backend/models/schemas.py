@@ -95,6 +95,3 @@ class TournamentResponse(TournamentBase):
     stadium: StadiumResponse  # Include full stadium details
     created_at: datetime
     is_approved: bool
-
-    class Config:
-        orm_mode = True
