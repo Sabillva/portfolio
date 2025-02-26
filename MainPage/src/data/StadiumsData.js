@@ -1,9 +1,14 @@
+import Azal from "../images/azal-arena.jpg"
+import Dalga from "../images/dalga-arena.jpg"
+import KapitalBank from "../images/kapital-bank-arena.jpg"
+import Kepez from "../images/kepez-arena.jpg"
+
 export const stadiumsData = [
   {
     id: 1,
     name: "Azal Arena",
     city: "Bakı",
-    image: "/images/azal-arena.jpg",
+    image: Azal,
     distance: 2.5,
     price: 50,
     availableHours: ["10:00-11:00", "11:00-12:00", "12:00-13:00", "13:00-14:00"],
@@ -19,7 +24,7 @@ export const stadiumsData = [
     id: 2,
     name: "Dalğa Arena",
     city: "Bakı",
-    image: "/images/dalga-arena.jpg",
+    image: Dalga,
     distance: 5.1,
     price: 60,
     availableHours: ["14:00-15:00", "15:00-16:00", "16:00-17:00", "17:00-18:00"],
@@ -35,7 +40,7 @@ export const stadiumsData = [
     id: 3,
     name: "Kapital Bank Arena",
     city: "Sumqayıt",
-    image: "/images/kapital-bank-arena.jpg",
+    image: KapitalBank,
     distance: 35.7,
     price: 45,
     availableHours: ["18:00-19:00", "19:00-20:00", "20:00-21:00"],
@@ -51,7 +56,7 @@ export const stadiumsData = [
     id: 4,
     name: "Kəpəz Stadionu",
     city: "Gəncə",
-    image: "/images/kepez-stadionu.jpg",
+    image: Kepez,
     distance: 360.2,
     price: 40,
     availableHours: ["10:00-11:00", "11:00-12:00", "12:00-13:00", "13:00-14:00", "14:00-15:00"],

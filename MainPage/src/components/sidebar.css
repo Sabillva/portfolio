@@ -1,1 +1,13 @@
 @import "tailwindcss";
+
+@font-face {
+    font-family: "Ravio Regular";
+    src: local("Ravio Regular"),
+      url("../fonts/Ravio-Regular.ttf") format("truetype");
+    font-weight: 400;
+  }
+  
+  body {
+    font-family: "Ravio Regular";
+    /* background-color: #0e100f; */
+  }
