@@ -57,7 +57,6 @@ def approve_owner(email: str, db: Session = Depends(get_db),
             if not user:
                 raise HTTPException(status_code=404, detail="User not found")
 
-            user.is_owner = True
             user.role = "owner"
 
             del pending_applications[email]

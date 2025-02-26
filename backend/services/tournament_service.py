@@ -1,12 +1,10 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session, joinedload
 
 from backend.models import schemas
-from backend.models.models import AppUser
-from backend.models.stadium import Stadium
-from backend.models.tournament import Tournament
+from backend.models.models import *
 
 
 def all_tournaments(db: Session):
@@ -32,8 +30,7 @@ def create_tournament(db: Session, tournament: schemas.TournamentCreate, current
     end_window = new_time + timedelta(hours=2)
 
     conflict_exists = db.query(Tournament).filter(
-        (Tournament.approximate_time >= start_window) &
-        (Tournament.approximate_time <= end_window)
+        Tournament.approximate_time.between(start_window, end_window)
     ).first()
 
     if conflict_exists:
@@ -122,7 +119,8 @@ def change_tournament(tournament_id, tournament_update, db, current_user):
 
 
 def delete_tournament(tournament_id, db, current_user):
-    db_tournament = db.query(Tournament).filter(Tournament.id == tournament_id).first()
+    # Eagerly load the stadium relationship
+    db_tournament = db.query(Tournament).options(joinedload(Tournament.stadium)).filter(Tournament.id == tournament_id).first()
     if not db_tournament:
         raise HTTPException(status_code=404, detail="Tournament not found")
 

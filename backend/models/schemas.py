@@ -68,7 +68,7 @@ class OwnerApproval(BaseModel):
 # --- Stadium Schemas ---
 class StadiumResponse(BaseModel):
     id: int
-    name: str
+    stadium_name: str
     location: str
 
 
