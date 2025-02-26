@@ -3,10 +3,10 @@ from datetime import datetime
 from sqlalchemy import Text, Float, JSON, ForeignKey, Column, Integer, String, DateTime, Boolean
 from sqlalchemy.orm import relationship
 
-from backend.database import Base
+from backend.database import Base, Base_Model
 
 
-class AppUser(Base):
+class AppUser(Base_Model):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -14,8 +14,8 @@ class AppUser(Base):
     email = Column(String(100), unique=True, index=True)
     hashed_password = Column(String(255))
     role = Column(String(50), default="user")
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    # created_at = Column(DateTime, default=datetime.utcnow)
+    # updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     stadiums = relationship("Stadium", back_populates="owner", cascade="all, delete")
     posts = relationship("Post", back_populates="user", cascade="all, delete")
@@ -23,7 +23,7 @@ class AppUser(Base):
     likes = relationship("Like", back_populates="user", cascade="all, delete")
 
 
-class Stadium(Base):
+class Stadium(Base_Model):
     __tablename__ = "stadiums"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -61,7 +61,7 @@ class Stadium(Base):
     posts = relationship("Post", back_populates="stadium", cascade="all, delete")
     owner = relationship("AppUser", back_populates="stadiums")
 
-class Tournament(Base):
+class Tournament(Base_Model):
     __tablename__ = "tournaments"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -70,12 +70,12 @@ class Tournament(Base):
     description = Column(Text, nullable=True)
     approximate_time = Column(DateTime)
     is_approved = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    # created_at = Column(DateTime, default=datetime.utcnow)
 
     # Relationship to Stadium (One tournament belongs to one stadium)
     stadium = relationship("Stadium", back_populates="tournaments")
 
-class Post(Base):
+class Post(Base_Model):
     __tablename__ = "posts"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -91,7 +91,7 @@ class Post(Base):
     comments = relationship("Comment", back_populates="post", cascade="all, delete")
     likes = relationship("Like", back_populates="post", cascade="all, delete")
 
-class Comment(Base):
+class Comment(Base_Model):
     __tablename__ = "comments"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -103,7 +103,7 @@ class Comment(Base):
     user = relationship("AppUser", back_populates="comments")
     post = relationship("Post", back_populates="comments")
 
-class Like(Base):
+class Like(Base_Model):
     __tablename__ = "likes"
 
     id = Column(Integer, primary_key=True, index=True)

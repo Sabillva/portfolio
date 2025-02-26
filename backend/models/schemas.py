@@ -57,6 +57,8 @@ class StadiumApplicationResponse(BaseModel):
     contact_number: str
     other_details: Optional[str] = None
     status: str
+    created_at: datetime
+    updated_at: datetime
 
 
 class OwnerApproval(BaseModel):
@@ -70,6 +72,8 @@ class StadiumResponse(BaseModel):
     id: int
     stadium_name: str
     location: str
+    created_at: datetime
+    updated_at: datetime
 
 
 # --- Tournament Schemas ---
@@ -95,3 +99,5 @@ class TournamentResponse(TournamentBase):
     stadium: StadiumResponse  # Include full stadium details
     created_at: datetime
     is_approved: bool
+    created_at: datetime
+    updated_at: datetime
