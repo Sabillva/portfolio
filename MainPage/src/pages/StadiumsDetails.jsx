@@ -1,5 +1,5 @@
 "use client";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   MapPin,
   DollarSign,
@@ -14,11 +14,16 @@ import { stadiumsData } from "../data/stadiumsData";
 
 const StadiumDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const stadium = stadiumsData.find((s) => s.id === Number.parseInt(id));
 
   if (!stadium) {
     return <div>Stadion tapılmadı</div>;
   }
+
+  const handleReservation = () => {
+    navigate(`/reservation/${stadium.id}`);
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -46,7 +51,7 @@ const StadiumDetails = () => {
               <span>Mövcud saatlar: {stadium.availableHours.join(", ")}</span>
             </div>
             <h3 className="text-xl font-semibold mb-4">İmkanlar</h3>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4 mb-6">
               <div className="flex items-center">
                 <Droplet
                   className={`mr-2 ${
@@ -96,6 +101,12 @@ const StadiumDetails = () => {
                 <span>Kamera</span>
               </div>
             </div>
+            <button
+              onClick={handleReservation}
+              className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300"
+            >
+              Rezervasiya Et
+            </button>
           </div>
         </div>
       </div>

@@ -68,6 +68,6 @@ export const stadiumsData = [
       camera: false,
     },
   },
-  // Daha çox stadion əlavə edə bilərsiniz
+  // Daha çox stadion əlavə edə bilərəm
 ]
 
