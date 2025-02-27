@@ -63,7 +63,7 @@ const Stadiums = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Stadionlar</h1>
+      <h1 className="text-3xl font-bold text-white mb-6">Stadionlar</h1>
       <SearchBar onSearch={handleSearch} />
       <div className="flex flex-col md:flex-row gap-6">
         <div className="md:w-1/4">

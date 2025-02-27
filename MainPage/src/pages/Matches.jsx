@@ -1,77 +1,85 @@
 import { Link } from "react-router-dom";
-import { useMatches } from "../context/MatchesContext.jsx";
-import { useTeams } from "../context/TeamsContext.jsx";
+import { useMatches } from "../context/MatchesContext";
+import { useTeams } from "../context/TeamsContext";
 import { MapPin, Calendar, Clock, Users, Swords } from "lucide-react";
 
 const Matches = () => {
   const { matches, joinMatch } = useMatches();
   const { teams } = useTeams();
 
-  const handleJoinMatch = (matchId) => {
-    // Bu hissədə normalda istifadəçinin komandasını seçməsi lazımdır
-    // Helelik ilk uyğun komandanı seçirəm
-    const availableTeam = teams.find(
+  const handleJoinMatch = (match) => {
+    const availableTeams = teams.filter(
       (team) =>
+        team.city === match.city &&
+        team.stadium === match.stadium &&
+        team.playDate === match.date &&
+        team.playTime === match.time &&
+        team.playerCount === match.playerCount &&
+        team.id !== match.team.id &&
         !matches.some(
-          (match) =>
-            match.team.id === team.id ||
-            (match.opponentTeam && match.opponentTeam.id === team.id)
+          (m) =>
+            m.team.id === team.id ||
+            (m.opponentTeam && m.opponentTeam.id === team.id)
         )
     );
 
-    if (availableTeam) {
-      joinMatch(matchId, availableTeam);
+    if (availableTeams.length > 0) {
+      joinMatch(match.id, availableTeams[0]);
     } else {
       alert("Uyğun komanda tapılmadı");
     }
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Matçlar</h1>
+    <div className="container mx-auto px-6 py-8 min-h-screen">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-4xl font-semibold text-white">Matçlar</h1>
         <Link
           to="/create-match"
-          className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 flex items-center"
+          className="px-6 py-3 bg-gradient-to-br from-green-400 to-green-600 text-black font- rounded-full shadow-lg transform transition-all duration-300 hover:bg-gradient-to-bl hover:shadow-2xl hover:scale-105 active:scale-95 active:from-green-600 active:to-green-400 flex items-center"
         >
-          <Swords className="mr-2" size={18} />
+          <Swords className="mr-3" size={20} />
           Yeni Matç Yarat
         </Link>
       </div>
       {matches.length === 0 ? (
-        <p className="text-center text-gray-600">
+        <p className="text-center text-gray-400 text-lg">
           Hələ heç bir matç yaradılmayıb.
         </p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {matches.map((match) => (
-            <div key={match.id} className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold mb-4">
+            <div
+              key={match.id}
+              className="bg-[#222] rounded-3xl border-2 border-white/20 shadow-lg p-6 transition transform hover:scale-101 hover:border-gray-300"
+            >
+              <h2 className="text-2xl font-semibold mb-4 text-white">
                 {match.team.name} vs{" "}
                 {match.opponentTeam ? match.opponentTeam.name : "TBA"}
               </h2>
-              <div className="space-y-2">
-                <p className="flex items-center text-gray-600">
+              <div className="space-y-3 text-gray-300">
+                <p className="flex items-center">
                   <MapPin className="mr-2" size={18} />
                   {match.city}, {match.stadium}
                 </p>
-                <p className="flex items-center text-gray-600">
+                <p className="flex items-center">
                   <Calendar className="mr-2" size={18} />
                   {match.date}
                 </p>
-                <p className="flex items-center text-gray-600">
+                <p className="flex items-center">
                   <Clock className="mr-2" size={18} />
                   {match.time}
                 </p>
-                <p className="flex items-center text-gray-600">
+                <p className="flex items-center">
                   <Users className="mr-2" size={18} />
                   {match.playerCount} oyunçu
                 </p>
               </div>
+
               {!match.opponentTeam && (
                 <button
-                  onClick={() => handleJoinMatch(match.id)}
-                  className="mt-4 w-full bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition duration-300"
+                  onClick={() => handleJoinMatch(match)}
+                  className="mt-5 w-full border-2 border-white text-white py-3 px-5 rounded-full bg-[#222] font-medium transition-all duration-300 shadow-lg hover:bg-white hover:text-[#222] hover:border-[#222] hover:scale-105"
                 >
                   Matça Qoşul
                 </button>

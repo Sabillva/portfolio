@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { TeamsProvider } from "../context/TeamsContext.jsx";
 import { MatchesProvider } from "../context/MatchesContext.jsx";
+import { ChatProvider } from "../context/ChatContext";
 import Teams from "../pages/Teams.jsx";
 import CreateTeam from "../pages/CreateTeam.jsx";
 import "../fonts/Ravio-Regular.ttf";
@@ -15,37 +16,41 @@ import Profile from "../pages/Profile.jsx";
 import TeamDetails from "../pages/TeamDetails.jsx";
 import Matches from "../pages/Matches.jsx";
 import CreateMatch from "../pages/CreateMatch.jsx";
+import Chat from "../pages/Chat";
 
 function App() {
   return (
     <TeamsProvider>
       <MatchesProvider>
-        <Router>
-          <div className="flex">
-            <SideBar />
-            <div className="flex-1 p-4">
-              <Routes>
-                <Route path="/stadiums" element={<Stadiums />} />
-                <Route path="/stadium/:id" element={<StadiumDetails />} />
-                <Route
-                  path="/reservation/:id"
-                  element={<ReservationProcess />}
-                />
-                <Route path="/payment-process" element={<PaymentProcess />} />
-                <Route
-                  path="/payment-confirmation"
-                  element={<PaymentConfirmation />}
-                />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/teams" element={<Teams />} />
-                <Route path="/create-team" element={<CreateTeam />} />
-                <Route path="/team/:id" element={<TeamDetails />} />
-                <Route path="/matches" element={<Matches />} />
-                <Route path="/create-match" element={<CreateMatch />} />
-              </Routes>
+        <ChatProvider>
+          <Router>
+            <div className="flex">
+              <SideBar />
+              <div className="flex-1 p-4">
+                <Routes>
+                  <Route path="/stadiums" element={<Stadiums />} />
+                  <Route path="/stadium/:id" element={<StadiumDetails />} />
+                  <Route
+                    path="/reservation/:id"
+                    element={<ReservationProcess />}
+                  />
+                  <Route path="/payment-process" element={<PaymentProcess />} />
+                  <Route
+                    path="/payment-confirmation"
+                    element={<PaymentConfirmation />}
+                  />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/teams" element={<Teams />} />
+                  <Route path="/create-team" element={<CreateTeam />} />
+                  <Route path="/team/:id" element={<TeamDetails />} />
+                  <Route path="/matches" element={<Matches />} />
+                  <Route path="/create-match" element={<CreateMatch />} />
+                  <Route path="/chat" element={<Chat />} />
+                </Routes>
+              </div>
             </div>
-          </div>
-        </Router>
+          </Router>
+        </ChatProvider>
       </MatchesProvider>
     </TeamsProvider>
   );

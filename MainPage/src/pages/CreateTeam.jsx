@@ -17,6 +17,7 @@ const CreateTeam = () => {
   const [availableStadiums, setAvailableStadiums] = useState([]);
   const [logo, setLogo] = useState(null);
   const [availableTimes, setAvailableTimes] = useState([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // Dropdown-u idarə etmək üçün
 
   useEffect(() => {
     if (city) {
@@ -78,10 +79,10 @@ const CreateTeam = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Komanda Yarat</h1>
+      <h1 className="text-3xl font-bold mb-6 text-white">Komanda Yarat</h1>
       <form
         onSubmit={handleSubmit}
-        className="max-w-md mx-auto bg-white rounded-lg shadow-md p-6"
+        className="max-w-md mx-auto bg-[#222] text-white border-2 border-white/20 rounded-3xl shadow-lg p-6"
       >
         <div className="mb-4">
           <label htmlFor="teamName" className="block text-sm font-medium mb-1">
@@ -92,26 +93,51 @@ const CreateTeam = () => {
             id="teamName"
             value={teamName}
             onChange={(e) => setTeamName(e.target.value)}
-            className="w-full p-2 border rounded"
+            className="w-full p-3 rounded-full bg-[#353535] border-white/20 border-2 focus:outline-none focus:ring-2 focus:ring-green-400"
             required
           />
         </div>
-        <div className="mb-4">
+        <div className="mb-4 relative">
           <label htmlFor="city" className="block text-sm font-medium mb-1">
             Şəhər
           </label>
-          <select
-            id="city"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-            className="w-full p-2 border rounded"
-            required
+          <div
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            className="w-full p-3 rounded-full bg-[#353535] border-white/20 border-2 focus:outline-none focus:ring-2 focus:ring-green-400 cursor-pointer"
           >
-            <option value="">Şəhər seçin</option>
-            <option value="Bakı">Bakı</option>
-            <option value="Sumqayıt">Sumqayıt</option>
-            <option value="Gəncə">Gəncə</option>
-          </select>
+            {city || "Şəhər seçin"}
+          </div>
+          {isDropdownOpen && (
+            <div className="absolute w-full bg-[#353535] border-white/20 border-2 rounded-lg mt-2">
+              <div
+                onClick={() => {
+                  setCity("Bakı");
+                  setIsDropdownOpen(false);
+                }}
+                className="px-4 py-2 text-white hover:bg-green-400 cursor-pointer border-white/20 rounded-lg"
+              >
+                Bakı
+              </div>
+              <div
+                onClick={() => {
+                  setCity("Sumqayıt");
+                  setIsDropdownOpen(false);
+                }}
+                className="px-4 py-2 text-white hover:bg-green-400 cursor-pointer border-white/20 rounded-lg"
+              >
+                Sumqayıt
+              </div>
+              <div
+                onClick={() => {
+                  setCity("Gəncə");
+                  setIsDropdownOpen(false);
+                }}
+                className="px-4 py-2 text-white hover:bg-green-400 cursor-pointer border-white/20 rounded-lg"
+              >
+                Gəncə
+              </div>
+            </div>
+          )}
         </div>
         <div className="mb-4">
           <label htmlFor="stadium" className="block text-sm font-medium mb-1">
@@ -121,7 +147,7 @@ const CreateTeam = () => {
             id="stadium"
             value={stadiumId}
             onChange={(e) => setStadiumId(e.target.value)}
-            className="w-full p-2 border rounded"
+            className="w-full p-3 rounded-full bg-[#353535] border-white/20 border-2 focus:outline-none focus:ring-2 focus:ring-green-400"
             required
             disabled={!city}
           >
@@ -133,6 +159,7 @@ const CreateTeam = () => {
             ))}
           </select>
         </div>
+
         <div className="mb-4">
           <label htmlFor="playDate" className="block text-sm font-medium mb-1">
             Oyun Tarixi
@@ -142,7 +169,7 @@ const CreateTeam = () => {
             id="playDate"
             value={playDate}
             onChange={(e) => setPlayDate(e.target.value)}
-            className="w-full p-2 border rounded"
+            className="w-full p-3 rounded-full bg-[#353535] border-white/20 border-2 focus:outline-none focus:ring-2 focus:ring-green-400"
             required
             min={new Date().toISOString().split("T")[0]}
           />
@@ -155,7 +182,7 @@ const CreateTeam = () => {
             id="playTime"
             value={playTime}
             onChange={(e) => setPlayTime(e.target.value)}
-            className="w-full p-2 border rounded"
+            className="w-full p-3 rounded-full bg-[#353535] border-white/20 border-2 focus:outline-none focus:ring-2 focus:ring-green-400"
             required
             disabled={!stadiumId || !playDate}
           >
@@ -181,7 +208,7 @@ const CreateTeam = () => {
             onChange={(e) => setPlayerCount(Number.parseInt(e.target.value))}
             min="5"
             max="11"
-            className="w-full p-2 border rounded"
+            className="w-full p-3 rounded-full bg-[#353535] border-white/20 border-2 focus:outline-none focus:ring-2 focus:ring-green-400"
             required
           />
         </div>
@@ -194,19 +221,19 @@ const CreateTeam = () => {
             id="logo"
             accept="image/*"
             onChange={handleLogoChange}
-            className="w-full p-2 border rounded"
+            className="w-full p-3 rounded-full bg-[#353535] border-white/20 border-2 focus:outline-none focus:ring-2 focus:ring-green-400"
           />
           {logo && (
             <img
               src={logo || "/placeholder.svg"}
               alt="Team Logo"
-              className="mt-2 w-20 h-20 object-cover rounded"
+              className="mt-2 w-20 h-20 object-cover rounded-full border-2 border-gray-300"
             />
           )}
         </div>
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300"
+          className="w-full bg-gradient-to-br from-green-400 to-green-600 text-gray-900 py-3 px-6 rounded-full font-medium shadow-lg transition-all duration-300 hover:bg-gradient-to-l hover:scale-105 hover:shadow-2xl active:scale-95 active:from-green-600 active:to-green-400"
         >
           Komanda Yarat
         </button>
