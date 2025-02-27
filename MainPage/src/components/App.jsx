@@ -26,19 +26,13 @@ function App() {
           <Router>
             <div className="flex">
               <SideBar />
-              <div className="flex-1 p-4">
+              <div className="flex-1 lg:ml-64 p-4 transition-all duration-300">
                 <Routes>
                   <Route path="/stadiums" element={<Stadiums />} />
                   <Route path="/stadium/:id" element={<StadiumDetails />} />
-                  <Route
-                    path="/reservation/:id"
-                    element={<ReservationProcess />}
-                  />
+                  <Route path="/reservation/:id" element={<ReservationProcess />} />
                   <Route path="/payment-process" element={<PaymentProcess />} />
-                  <Route
-                    path="/payment-confirmation"
-                    element={<PaymentConfirmation />}
-                  />
+                  <Route path="/payment-confirmation" element={<PaymentConfirmation />} />
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/teams" element={<Teams />} />
                   <Route path="/create-team" element={<CreateTeam />} />
@@ -53,7 +47,7 @@ function App() {
         </ChatProvider>
       </MatchesProvider>
     </TeamsProvider>
-  );
+  )
 }
 
 export default App;

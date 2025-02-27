@@ -75,10 +75,10 @@ const Profile = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Profil</h1>
+      <h1 className="text-3xl text-white font-bold mb-6">Profil</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-1">
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="bg-[#222222] rounded-3xl border-2 border-white/20 shadow-lg p-6">
             <img
               src={user.avatar || "/placeholder.svg"}
               alt={user.name}
@@ -86,28 +86,32 @@ const Profile = () => {
             />
             {!isEditing ? (
               <>
-                <h2 className="text-2xl font-semibold text-center mb-4">
+                <h2 className="text-2xl font-semibold text-center text-white mb-4">
                   {user.name}
                 </h2>
                 <div className="space-y-2">
-                  <p className="flex items-center">
+                  <p className="flex items-center text-white">
                     <Mail className="mr-2" size={18} /> {user.email}
                   </p>
-                  <p className="flex items-center">
+                  <p className="flex items-center text-white">
                     <Phone className="mr-2" size={18} /> {user.phone}
                   </p>
                 </div>
                 <button
                   onClick={handleEdit}
-                  className="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 flex items-center justify-center"
+                  className="w-full mt-2 bg-gradient-to-br from-green-400 to-green-600 text-gray-900 py-2 px-6 rounded-full shadow-lg hover:bg-gradient-to-bl hover:shadow-2xl transition duration-300 flex items-center justify-center"
                 >
-                  <Edit2 className="mr-2" size={18} /> Redaktə et
+                  <Edit2 className="mr-2" size={18} />
+                  Redaktə et
                 </button>
               </>
             ) : (
-              <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
+              <form
+                onSubmit={(e) => e.preventDefault()}
+                className="space-y-4 bg-[#333] border-2 border-white/20 p-4 rounded-lg"
+              >
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-sm font-medium mb-1 text-white">
                     Ad Soyad
                   </label>
                   <input
@@ -115,11 +119,11 @@ const Profile = () => {
                     name="name"
                     value={editedUser.name}
                     onChange={handleChange}
-                    className="w-full p-2 border rounded"
+                    className="w-full p-2 border-2 border-white/20 rounded-3xl bg-transparent text-white focus:outline-none focus:ring-2 focus:ring-green-600"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-sm font-medium mb-1 text-white">
                     E-poçt
                   </label>
                   <input
@@ -127,11 +131,11 @@ const Profile = () => {
                     name="email"
                     value={editedUser.email}
                     onChange={handleChange}
-                    className="w-full p-2 border rounded"
+                    className="w-full p-2 border-2 border-white/20 rounded-3xl bg-transparent text-white focus:outline-none focus:ring-2 focus:ring-green-600"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-sm font-medium mb-1 text-white">
                     Telefon
                   </label>
                   <input
@@ -139,21 +143,23 @@ const Profile = () => {
                     name="phone"
                     value={editedUser.phone}
                     onChange={handleChange}
-                    className="w-full p-2 border rounded"
+                    className="w-full p-2 border-2 border-white/20 rounded-3xl bg-transparent text-white focus:outline-none focus:ring-2 focus:ring-green-600"
                   />
                 </div>
                 <div className="flex space-x-2">
                   <button
                     onClick={handleSave}
-                    className="flex-1 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition duration-300 flex items-center justify-center"
+                    className="flex-1 bg-gradient-to-br from-green-400 to-green-600 text-gray-900 py-2 px-6 rounded-full shadow-lg hover:bg-gradient-to-bl hover:shadow-2xl transition duration-300 flex items-center justify-center"
                   >
-                    <Save className="mr-2" size={18} /> Yadda saxla
+                    <Save className="mr-2" size={18} />
+                    Yadda saxla
                   </button>
                   <button
                     onClick={handleCancel}
-                    className="flex-1 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 transition duration-300 flex items-center justify-center"
+                    className="flex-1 bg-gradient-to-br from-red-400 to-red-600 text-gray-900 py-2 px-6 rounded-full shadow-lg hover:bg-gradient-to-bl hover:shadow-2xl transition duration-300 flex items-center justify-center"
                   >
-                    <X className="mr-2" size={18} /> Ləğv et
+                    <X className="mr-2" size={18} />
+                    Ləğv et
                   </button>
                 </div>
               </form>
@@ -161,25 +167,34 @@ const Profile = () => {
           </div>
         </div>
         <div className="md:col-span-2">
-          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-            <h3 className="text-xl font-semibold mb-4">Statistika</h3>
+          <div className="bg-[#222] rounded-3xl border-2 border-white/20 shadow-lg p-6 mb-6">
+            <h3 className="text-xl font-semibold text-white mb-4">
+              Statistika
+            </h3>
             <div className="grid grid-cols-3 gap-4">
               <div className="text-center">
-                <p className="text-3xl font-bold">{user.stats.gamesPlayed}</p>
-                <p className="text-gray-600">Oynanılmış oyunlar</p>
+                <p className="text-3xl font-bold text-white">
+                  {user.stats.gamesPlayed}
+                </p>
+                <p className="text-gray-400">Oynanılmış oyunlar</p>
               </div>
               <div className="text-center">
-                <p className="text-3xl font-bold">{user.stats.teamsJoined}</p>
-                <p className="text-gray-600">Qoşulduğu komandalar</p>
+                <p className="text-3xl font-bold text-white">
+                  {user.stats.teamsJoined}
+                </p>
+                <p className="text-gray-400">Qoşulduğu komandalar</p>
               </div>
               <div className="text-center">
-                <p className="text-3xl font-bold">{user.stats.reservations}</p>
-                <p className="text-gray-600">Rezervasiyalar</p>
+                <p className="text-3xl font-bold text-white">
+                  {user.stats.reservations}
+                </p>
+                <p className="text-gray-400">Rezervasiyalar</p>
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-xl font-semibold mb-4">
+
+          <div className="bg-[#222] rounded-3xl border-2 border-white/20 shadow-lg p-6 mb-6">
+            <h3 className="text-xl font-semibold text-white mb-4">
               Rezervasiya Tarixçəsi
             </h3>
             <div className="space-y-4">
@@ -189,13 +204,15 @@ const Profile = () => {
                   className="flex items-center justify-between border-b pb-2"
                 >
                   <div>
-                    <p className="font-semibold">{reservation.stadium}</p>
-                    <p className="text-sm text-gray-600 flex items-center">
+                    <p className="font-semibold text-white">
+                      {reservation.stadium}
+                    </p>
+                    <p className="text-sm text-gray-400 flex items-center">
                       <Calendar className="mr-1" size={14} />
                       {reservation.date} | {reservation.time}
                     </p>
                   </div>
-                  <p className="font-semibold flex items-center">
+                  <p className="font-semibold text-white flex items-center">
                     <DollarSign className="mr-1" size={14} />
                     {reservation.price} AZN
                   </p>

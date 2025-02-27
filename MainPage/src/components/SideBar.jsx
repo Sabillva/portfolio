@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   StickerIcon as Stadium,
@@ -22,6 +22,21 @@ const SideBar = () => {
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setIsOpen(true);
+      } else {
+        setIsOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const menuItems = [
     { name: "Stadiums", icon: <Stadium size={20} />, path: "/stadiums" },
@@ -51,7 +66,7 @@ const SideBar = () => {
     <>
       {/* Hamburger button for small screens */}
       <button
-        className="fixed top-4 left-4 z-50 p-3 bg-primary text-[#222] rounded-md lg:hidden"
+        className="fixed top-4 left-4 z-50 p-3 bg-primary text-white rounded-md lg:hidden"
         onClick={toggleSidebar}
       >
         {isOpen ? <X size={24} className="text-white" /> : <Menu size={24} />}
@@ -75,7 +90,7 @@ const SideBar = () => {
                   <Link
                     to={item.path}
                     className="flex items-center px-6 py-3 text-gray-300 hover:bg-primary hover:text-white transition-all duration-200 ease-in-out"
-                    onClick={() => setIsOpen(false)}
+                    onClick={() => window.innerWidth < 1024 && setIsOpen(false)}
                   >
                     {item.icon}
                     <span className="ml-4">{item.name}</span>

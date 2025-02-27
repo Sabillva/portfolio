@@ -18,7 +18,7 @@ const TeamDetails = () => {
   const team = teams.find((t) => t.id === Number.parseInt(id));
 
   if (!team) {
-    return <div>Komanda tapılmadı</div>;
+    return <div className="text-white text-center">Komanda tapılmadı</div>;
   }
 
   const handleEdit = () => {
@@ -35,19 +35,19 @@ const TeamDetails = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="bg-white rounded-lg shadow-md p-6">
+      <div className=" mx-auto bg-[#333] rounded-3xl shadow-xl p-6 border-2 border-white/20">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">{team.name}</h1>
+          <h1 className="text-3xl font-bold text-white">{team.name}</h1>
           <div className="space-x-2">
             <button
               onClick={handleEdit}
-              className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300"
+              className="bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-600 transition duration-300"
             >
               <Edit size={18} />
             </button>
             <button
               onClick={handleDelete}
-              className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 transition duration-300"
+              className="bg-red-500 text-white py-2 px-4 rounded-full hover:bg-red-600 transition duration-300"
             >
               <Trash2 size={18} />
             </button>
@@ -62,32 +62,34 @@ const TeamDetails = () => {
         )}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div className="space-y-2">
-            <p className="flex items-center text-gray-600">
+            <p className="flex items-center text-white">
               <MapPin className="mr-2" size={18} />
               {team.city}
             </p>
-            <p className="flex items-center text-gray-600">
+            <p className="flex items-center text-white">
               <Pitch className="mr-2" size={18} />
               {team.stadium}
             </p>
-            <p className="flex items-center text-gray-600">
+            <p className="flex items-center text-white">
               <Calendar className="mr-2" size={18} />
               {team.playDate}
             </p>
-            <p className="flex items-center text-gray-600">
+            <p className="flex items-center text-white">
               <Clock className="mr-2" size={18} />
               {team.playTime}
             </p>
-            <p className="flex items-center text-gray-600">
+            <p className="flex items-center text-white">
               <Users className="mr-2" size={18} />
               {team.currentPlayers} / {team.playerCount} oyunçu
             </p>
           </div>
         </div>
-        <h2 className="text-2xl font-semibold mb-4">Komanda Üzvləri</h2>
+        <h2 className="text-2xl font-semibold text-white mb-4">
+          Komanda Üzvləri
+        </h2>
         <ul className="space-y-2">
           {team.members.map((member) => (
-            <li key={member.id} className="flex items-center">
+            <li key={member.id} className="flex items-center text-white">
               <Users className="mr-2" size={18} />
               {member.name}
             </li>
@@ -96,7 +98,7 @@ const TeamDetails = () => {
       </div>
       <Link
         to="/teams"
-        className="mt-6 inline-block bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600 transition duration-300"
+        className="mt-6 inline-block bg-gradient-to-br from-green-400 to-green-600 py-2 px-4 rounded-full hover:bg-gradient-to-bl hover:shadow-2xl transition duration-300"
       >
         Komandalara Qayıt
       </Link>

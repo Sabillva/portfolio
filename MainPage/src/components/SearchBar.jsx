@@ -76,7 +76,7 @@ const SearchBar = ({ onSearch }) => {
           value={date}
           min={today}
           onChange={(e) => setDate(e.target.value)}
-          className="w-full pl-12 pr-4 py-2 rounded-xl bg-gray-800 text-white border-2 border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-400 hover:bg-gray-700 transition-all duration-300 ease-in-out"
+          className="w-full pl-12 pr-4 py-2 rounded-full bg-[#222] text-white border-2 border-white/20 focus:outline-none focus:ring-2 focus:ring-green-400 hover:bg-[#333] transition-all duration-300 ease-in-out"
         />
       </div>
 

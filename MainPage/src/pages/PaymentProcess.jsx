@@ -14,13 +14,10 @@ const PaymentProcess = () => {
   const [cardName, setCardName] = useState("");
   const [expiryDate, setExpiryDate] = useState("");
   const [cvv, setCvv] = useState("");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Burada ödəniş prosesini həyata keçirə bilərik
-    // Bir API çağırışı edə bilərik
-
-    // Ödəniş uğurlu olduqda, təsdiq səhifəsinə yönləndirməlidir
     navigate("/payment-confirmation", {
       state: {
         stadiumId,
@@ -38,13 +35,16 @@ const PaymentProcess = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Ödəniş Prosesi</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center text-white">
+        Ödəniş Prosesi
+      </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Rezervasiya Məlumatları */}
         <div>
-          <h2 className="text-xl font-semibold mb-4">
+          <h2 className="text-xl font-semibold mb-4 text-white">
             Rezervasiya Məlumatları
           </h2>
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="bg-[#333] text-white rounded-3xl border-2 border-white/20 shadow-md p-6">
             <div className="flex items-center mb-4">
               <Calendar className="mr-2" size={18} />
               <span>
@@ -57,27 +57,58 @@ const PaymentProcess = () => {
             </div>
           </div>
         </div>
+
+        {/* Ödəniş Məlumatları */}
         <div>
-          <h2 className="text-xl font-semibold mb-4">Ödəniş Məlumatları</h2>
+          <h2 className="text-xl font-semibold mb-4 text-white">
+            Ödəniş Məlumatları
+          </h2>
           <form
             onSubmit={handleSubmit}
-            className="bg-white rounded-lg shadow-md p-6"
+            className="bg-[#333] rounded-3xl border-2 border-white/20 shadow-md p-6"
           >
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-2">
+            <div className="relative w-full mb-3">
+              <label className="block text-sm font-medium mb-2 text-white">
                 Ödəniş Metodu
               </label>
-              <select
-                value={paymentMethod}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-                className="w-full p-2 border rounded"
+              <div
+                className="flex items-center border-2 border-white/20 rounded-full p-2 bg-[#222] cursor-pointer transition focus-within:border-gray-500 w-full"
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               >
-                <option value="credit_card">Kredit Kartı</option>
-                <option value="debit_card">Debet Kartı</option>
-              </select>
+                <DollarSign className="text-gray-400 ml-3" size={20} />
+                <span className="flex-1 text-white px-2">
+                  {paymentMethod === "credit_card"
+                    ? "Kredit Kartı"
+                    : "Debet Kartı"}
+                </span>
+              </div>
+
+              {isDropdownOpen && (
+                <div className="absolute z-10 bg-[#222] border-2 border-white/20 rounded-lg w-full mt-1">
+                  <div
+                    onClick={() => {
+                      setPaymentMethod("credit_card");
+                      setIsDropdownOpen(false);
+                    }}
+                    className="px-4 py-2 text-white hover:bg-green-400 cursor-pointer border-white/20 rounded-lg"
+                  >
+                    Kredit Kartı
+                  </div>
+                  <div
+                    onClick={() => {
+                      setPaymentMethod("debit_card");
+                      setIsDropdownOpen(false);
+                    }}
+                    className="px-4 py-2 text-white hover:bg-green-400 cursor-pointer border-white/20 rounded-lg"
+                  >
+                    Debet Kartı
+                  </div>
+                </div>
+              )}
             </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-2">
+
+            <div className="w-full mb-4">
+              <label className="block text-sm font-medium mb-2 text-white">
                 Kart Nömrəsi
               </label>
               <input
@@ -85,12 +116,12 @@ const PaymentProcess = () => {
                 value={cardNumber}
                 onChange={(e) => setCardNumber(e.target.value)}
                 placeholder="1234 5678 9012 3456"
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border-2 border-white/20 rounded-3xl bg-[#222] text-white focus:outline-none focus:ring-2 focus:ring-green-500"
                 required
               />
             </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-2">
+            <div className="w-full mb-4">
+              <label className="block text-sm font-medium mb-2 text-white">
                 Kart Sahibinin Adı
               </label>
               <input
@@ -98,13 +129,13 @@ const PaymentProcess = () => {
                 value={cardName}
                 onChange={(e) => setCardName(e.target.value)}
                 placeholder="AD SOYAD"
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border-2 border-white/20 rounded-3xl bg-[#222] text-white focus:outline-none focus:ring-2 focus:ring-green-500"
                 required
               />
             </div>
             <div className="grid grid-cols-2 gap-4 mb-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">
+              <div className="w-full">
+                <label className="block text-sm font-medium mb-2 text-white">
                   Bitmə Tarixi
                 </label>
                 <input
@@ -112,25 +143,27 @@ const PaymentProcess = () => {
                   value={expiryDate}
                   onChange={(e) => setExpiryDate(e.target.value)}
                   placeholder="MM/YY"
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border-2 border-white/20 rounded-3xl bg-[#222] text-white focus:outline-none focus:ring-2 focus:ring-green-500"
                   required
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">CVV</label>
+              <div className="w-full">
+                <label className="block text-sm font-medium mb-2 text-white">
+                  CVV
+                </label>
                 <input
                   type="text"
                   value={cvv}
                   onChange={(e) => setCvv(e.target.value)}
                   placeholder="123"
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border-2 border-white/20 rounded-3xl bg-[#222] text-white focus:outline-none focus:ring-2 focus:ring-green-500"
                   required
                 />
               </div>
             </div>
             <button
               type="submit"
-              className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300"
+              className="w-full bg-gradient-to-br from-green-400 to-green-600 text-gray-900 py-2 px-6 rounded-full shadow-lg hover:bg-gradient-to-bl hover:shadow-2xl transition duration-300"
             >
               Ödənişi Tamamla
             </button>
