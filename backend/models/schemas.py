@@ -83,10 +83,6 @@ class TournamentBase(BaseModel):
     stadium_id: int  # Single stadium ID (one-to-many relationship)
 
 
-class TournamentCreate(TournamentBase):
-    user_id: int  # The user creating the tournament
-
-
 class TournamentUpdate(BaseModel):
     description: Optional[str] = None
     approximate_time: Optional[datetime] = None

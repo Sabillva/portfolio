@@ -14,8 +14,6 @@ class AppUser(Base_Model):
     email = Column(String(100), unique=True, index=True)
     hashed_password = Column(String(255))
     role = Column(String(50), default="user")
-    # created_at = Column(DateTime, default=datetime.utcnow)
-    # updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     stadiums = relationship("Stadium", back_populates="owner", cascade="all, delete")
     posts = relationship("Post", back_populates="user", cascade="all, delete")
@@ -70,7 +68,6 @@ class Tournament(Base_Model):
     description = Column(Text, nullable=True)
     approximate_time = Column(DateTime)
     is_approved = Column(Boolean, default=False)
-    # created_at = Column(DateTime, default=datetime.utcnow)
 
     # Relationship to Stadium (One tournament belongs to one stadium)
     stadium = relationship("Stadium", back_populates="tournaments")

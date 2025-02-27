@@ -16,7 +16,7 @@ def get_all_tournaments(db: Session = Depends(get_db)):
 
 
 @router.post("/create", response_model=schemas.TournamentResponse)
-def create_tournament(tournament: schemas.TournamentCreate, db: Session = Depends(get_db),
+def create_tournament(tournament: schemas.TournamentBase, db: Session = Depends(get_db),
                       current_user: AppUser = Depends(get_current_user)):
     return tournament_service.create_tournament(db=db, tournament=tournament, current_user=current_user)
 

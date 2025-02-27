@@ -16,7 +16,7 @@ def all_tournaments(db: Session):
     return tournaments
 
 
-def create_tournament(db: Session, tournament: schemas.TournamentCreate, current_user: AppUser):
+def create_tournament(db: Session, tournament: schemas.TournamentBase, current_user: AppUser):
     stadium = db.query(Stadium).filter(Stadium.id == tournament.stadium_id).first()
     if not stadium:
         raise HTTPException(
