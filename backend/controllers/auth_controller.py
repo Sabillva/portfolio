@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Security
+from fastapi import APIRouter, Depends, HTTPException, status, Security, Response
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
@@ -21,8 +21,8 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     return AuthService.create_user(db, user)
 
 
-@router.post("/login", response_model=Token)
-def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+@router.post("/login")
+def login(response: Response, form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = AuthService.authenticate_user(db, form_data.username, form_data.password)
     if not user:
         raise HTTPException(
@@ -30,7 +30,23 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    return AuthService.create_token(user)
+    token = AuthService.create_token(user)
+
+    response.set_cookie(
+        key="access_token",
+        value=f"Bearer {token.access_token}",
+        httponly=True,  # Prevent client-side script access to the cookie
+        max_age=1800,  # Cookie expiration time in seconds (30 minutes)
+        samesite="lax",  # Helps prevent CSRF attacks
+        secure=False,  # after implementing https make it true
+    )
+
+    return {"message": "Login successful"}
+
+@router.post("/logout")
+def logout(response: Response):
+    response.delete_cookie(key="access_token")
+    return {"message": "Logged out successfully"}
 
 @router.post("/apply-owner")
 def apply_for_owner(application: StadiumApplication):
