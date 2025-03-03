@@ -3,6 +3,7 @@ import ArrowRight from "../assets/right-arrow.svg";
 import Logo from "../assets/logo.svg";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-scroll";
+import { useNavigate } from "react-router-dom";
 
 const navLinks = [
   { label: "Home", to: "home" },
@@ -28,6 +29,12 @@ document.addEventListener("click", (event) => {
 });
 
 function Header() {
+
+  const navigate = useNavigate();
+
+const goToRegister = () => {
+  navigate("/register");
+};
   useEffect(() => {
     const links = document.querySelectorAll("a[href^='#']");
 
@@ -128,6 +135,7 @@ function Header() {
                 />
               </div>
               <motion.button
+                onClick={goToRegister}
                 whileHover={{ scale: 0.95 }}
                 whileTap={{ scale: 0.9 }}
                 transition={{ duration: 0.3 }}
@@ -136,6 +144,7 @@ function Header() {
                 Log In
               </motion.button>
               <motion.button
+                onClick={goToRegister}
                 whileHover={{ scale: 0.95 }}
                 whileTap={{ scale: 0.9 }}
                 transition={{ duration: 0.3 }}
@@ -169,6 +178,7 @@ function Header() {
                     </Link>
                   ))}
                   <motion.button
+                    onClick={goToRegister}
                     whileHover={{ scale: 0.95 }}
                     whileTap={{ scale: 0.9 }}
                     transition={{ duration: 0.3 }}
@@ -177,6 +187,7 @@ function Header() {
                     Log In
                   </motion.button>
                   <motion.button
+                    onClick={goToRegister}
                     whileHover={{ scale: 0.95 }}
                     whileTap={{ scale: 0.9 }}
                     transition={{ duration: 0.3 }}

@@ -1,3 +1,4 @@
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "../fonts/Ravio-Regular.ttf";
 import Header from "./Header.jsx";
 import Hero from "./Hero.jsx";
@@ -10,22 +11,35 @@ import Faqs from "./Faqs.jsx";
 import Words from "./Words.jsx";
 import Contact from "./Contact.jsx";
 import Footer from "./Footer.jsx";
+import Register from "../../../MainPage/src/pages/Register.jsx";
+
+// Register səhifəsini əlavə edirik
 
 function App() {
   return (
-    <>
+    <Router>
       <Header />
-      <Hero />
-      <LogoTicker />
-      <Introduction />
-      <Features />
-      <Matches />
-      <Words />
-      <Testimonials />
-      <Faqs />
-      <Contact />
-      <Footer />
-    </>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <>
+              <Hero />
+              <LogoTicker />
+              <Introduction />
+              <Features />
+              <Matches />
+              <Words />
+              <Testimonials />
+              <Faqs />
+              <Contact />
+              <Footer />
+            </>
+          }
+        />
+        <Route path="/register" element={<Register />} />
+      </Routes>
+    </Router>
   );
 }
 
