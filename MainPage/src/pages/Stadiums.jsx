@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import SearchBar from "../components/SearchBar";
 import StadiumList from "../components/StadiumList";
 import Filters from "../components/Filters";
 import Pagination from "../components/Pagination";
 import { stadiumsData } from "../data/stadiumsData";
+import { LogOut } from "lucide-react";
 
 const Stadiums = () => {
   const [filteredStadiums, setFilteredStadiums] = useState(stadiumsData);
@@ -61,9 +63,26 @@ const Stadiums = () => {
 
   const totalPages = Math.ceil(filteredStadiums.length / stadiumsPerPage);
 
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("currentUser");
+    localStorage.setItem("isLoggedIn", "false");
+    navigate("/login");
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-white mb-6">Stadionlar</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Stadionlar</h1>
+        <button
+          onClick={handleLogout}
+          className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 transition duration-300 flex items-center"
+        >
+          <LogOut size={18} className="mr-2" />
+          Çıxış
+        </button>
+      </div>
       <SearchBar onSearch={handleSearch} />
       <div className="flex flex-col md:flex-row gap-6">
         <div className="md:w-1/4">

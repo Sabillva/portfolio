@@ -1,4 +1,4 @@
-import StadiumCard from "./StadiumCard"
+import StadiumCard from "./StadiumCard";
 
 const StadiumList = ({ stadiums }) => {
   return (
@@ -7,8 +7,7 @@ const StadiumList = ({ stadiums }) => {
         <StadiumCard key={stadium.id} stadium={stadium} />
       ))}
     </div>
-  )
-}
+  );
+};
 
-export default StadiumList
-
+export default StadiumList;

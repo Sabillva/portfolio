@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext, useEffect } from "react";
 
 const MatchesContext = createContext();
 
@@ -9,23 +9,58 @@ export const useMatches = () => useContext(MatchesContext);
 export const MatchesProvider = ({ children }) => {
   const [matches, setMatches] = useState([]);
 
+  useEffect(() => {
+    const storedMatches = JSON.parse(localStorage.getItem("matches")) || [];
+    setMatches(storedMatches);
+  }, []);
+
   const createMatch = (match) => {
-    setMatches((prevMatches) => [...prevMatches, { ...match, id: Date.now() }]);
+    const updatedMatches = [...matches, match];
+    setMatches(updatedMatches);
+    localStorage.setItem("matches", JSON.stringify(updatedMatches));
   };
 
   const joinMatch = (matchId, team) => {
-    setMatches((prevMatches) =>
-      prevMatches.map((match) => {
-        if (match.id === matchId && !match.opponentTeam) {
-          return { ...match, opponentTeam: team };
-        }
-        return match;
-      })
+    const updatedMatches = matches.map((match) => {
+      if (match.id === matchId && !match.opponentTeam) {
+        return { ...match, opponentTeam: team, isReady: true };
+      }
+      return match;
+    });
+    setMatches(updatedMatches);
+    localStorage.setItem("matches", JSON.stringify(updatedMatches));
+  };
+
+  const getMatchesByTeam = (teamId) => {
+    return matches.filter(
+      (match) =>
+        match.team.id === teamId ||
+        (match.opponentTeam && match.opponentTeam.id === teamId)
+    );
+  };
+
+  const getCompatibleMatches = (team) => {
+    return matches.filter(
+      (match) =>
+        match.team.city === team.city &&
+        match.team.playDate === team.playDate &&
+        match.team.playTime === team.playTime &&
+        match.team.playerCount === team.playerCount &&
+        match.team.stadiumId === team.stadiumId &&
+        !match.opponentTeam
     );
   };
 
   return (
-    <MatchesContext.Provider value={{ matches, createMatch, joinMatch }}>
+    <MatchesContext.Provider
+      value={{
+        matches,
+        createMatch,
+        joinMatch,
+        getMatchesByTeam,
+        getCompatibleMatches,
+      }}
+    >
       {children}
     </MatchesContext.Provider>
   );

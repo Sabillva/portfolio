@@ -26,18 +26,6 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("userStoppedTyping", { teamId, userId });
   });
 
-  socket.on("editMessage", ({ teamId, messageId, newText }) => {
-    io.emit("messageEdited", { teamId, messageId, newText });
-  });
-
-  socket.on("deleteMessage", ({ teamId, messageId }) => {
-    io.emit("messageDeleted", { teamId, messageId });
-  });
-
-  socket.on("addReaction", ({ teamId, messageId, userId, reaction }) => {
-    io.emit("reactionAdded", { teamId, messageId, userId, reaction });
-  });
-
   socket.on("disconnect", () => {
     console.log("Client disconnected");
   });

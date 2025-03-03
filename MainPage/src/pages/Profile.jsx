@@ -1,57 +1,22 @@
 "use client";
 
-import { useState } from "react";
-import {
-  Mail,
-  Phone,
-  Edit2,
-  Save,
-  X,
-  Calendar,
-  DollarSign,
-} from "lucide-react";
-
-// Bu məlumatlar normalda backend-dən gələcək
-const mockUserData = {
-  id: 1,
-  name: "Əli Məmmədov",
-  email: "ali@example.com",
-  phone: "+994 50 123 45 67",
-  avatar: "https://i.pravatar.cc/150?img=3",
-  stats: {
-    gamesPlayed: 15,
-    teamsJoined: 3,
-    reservations: 8,
-  },
-  reservationHistory: [
-    {
-      id: 1,
-      date: "2023-06-15",
-      time: "18:00-19:00",
-      stadium: "Azal Arena",
-      price: 50,
-    },
-    {
-      id: 2,
-      date: "2023-06-22",
-      time: "19:00-20:00",
-      stadium: "Dalğa Arena",
-      price: 60,
-    },
-    {
-      id: 3,
-      date: "2023-06-29",
-      time: "20:00-21:00",
-      stadium: "Kapital Bank Arena",
-      price: 45,
-    },
-  ],
-};
+import { useState, useEffect } from "react";
+import { Edit2, LogOut } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
-  const [user, setUser] = useState(mockUserData);
+  const [user, setUser] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [editedUser, setEditedUser] = useState(user);
+  const [editedUser, setEditedUser] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    if (currentUser) {
+      setUser(currentUser);
+      setEditedUser(currentUser);
+    }
+  }, []);
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -60,7 +25,17 @@ const Profile = () => {
   const handleSave = () => {
     setUser(editedUser);
     setIsEditing(false);
-    // Burada backend-ə məlumatları göndərmək lazımdır
+
+    // Istifadəçi məlumatlarını yenilə
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    const updatedUsers = users.map((u) =>
+      u.id === editedUser.id ? { ...u, ...editedUser, email: u.email } : u
+    );
+    localStorage.setItem("users", JSON.stringify(updatedUsers));
+    localStorage.setItem(
+      "currentUser",
+      JSON.stringify({ ...editedUser, email: user.email })
+    );
   };
 
   const handleCancel = () => {
@@ -73,154 +48,123 @@ const Profile = () => {
     setEditedUser((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const newProfileImage = reader.result;
+        setEditedUser((prev) => ({ ...prev, profileImage: newProfileImage }));
+        // Save to localStorage immediately
+        const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+        const updatedUser = { ...currentUser, profileImage: newProfileImage };
+        localStorage.setItem("currentUser", JSON.stringify(updatedUser));
+
+        // Update users array in localStorage
+        const users = JSON.parse(localStorage.getItem("users")) || [];
+        const updatedUsers = users.map((u) =>
+          u.id === currentUser.id ? updatedUser : u
+        );
+        localStorage.setItem("users", JSON.stringify(updatedUsers));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("currentUser");
+    localStorage.setItem("isLoggedIn", "false");
+    navigate("/login");
+  };
+
+  if (!user) return <div>Loading...</div>;
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl text-white font-bold mb-6">Profil</h1>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="md:col-span-1">
-          <div className="bg-[#222222] rounded-3xl border-2 border-white/20 shadow-lg p-6">
+      <h1 className="text-3xl font-bold mb-6">Profil</h1>
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="flex items-center mb-6">
+          <div className="relative">
             <img
-              src={user.avatar || "/placeholder.svg"}
+              src={user.profileImage || "/placeholder.svg"}
               alt={user.name}
-              className="w-32 h-32 rounded-full mx-auto mb-4"
+              className="w-32 h-32 rounded-full object-cover"
             />
+            <label
+              htmlFor="profile-image"
+              className="absolute bottom-0 right-0 bg-blue-500 text-white p-2 rounded-full cursor-pointer"
+            >
+              <Edit2 size={16} />
+            </label>
+            <input
+              id="profile-image"
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleImageChange}
+              disabled={!isEditing}
+            />
+          </div>
+          <div className="ml-6">
             {!isEditing ? (
               <>
-                <h2 className="text-2xl font-semibold text-center text-white mb-4">
-                  {user.name}
-                </h2>
-                <div className="space-y-2">
-                  <p className="flex items-center text-white">
-                    <Mail className="mr-2" size={18} /> {user.email}
-                  </p>
-                  <p className="flex items-center text-white">
-                    <Phone className="mr-2" size={18} /> {user.phone}
-                  </p>
-                </div>
-                <button
-                  onClick={handleEdit}
-                  className="w-full mt-2 bg-gradient-to-br from-green-400 to-green-600 text-gray-900 py-2 px-6 rounded-full shadow-lg hover:bg-gradient-to-bl hover:shadow-2xl transition duration-300 flex items-center justify-center"
-                >
-                  <Edit2 className="mr-2" size={18} />
-                  Redaktə et
-                </button>
+                <h2 className="text-2xl font-semibold">{user.name}</h2>
+                <p className="text-gray-600">{user.email}</p>
+                <p className="text-gray-600">{user.phone}</p>
               </>
             ) : (
-              <form
-                onSubmit={(e) => e.preventDefault()}
-                className="space-y-4 bg-[#333] border-2 border-white/20 p-4 rounded-lg"
-              >
-                <div>
-                  <label className="block text-sm font-medium mb-1 text-white">
-                    Ad Soyad
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={editedUser.name}
-                    onChange={handleChange}
-                    className="w-full p-2 border-2 border-white/20 rounded-3xl bg-transparent text-white focus:outline-none focus:ring-2 focus:ring-green-600"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1 text-white">
-                    E-poçt
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={editedUser.email}
-                    onChange={handleChange}
-                    className="w-full p-2 border-2 border-white/20 rounded-3xl bg-transparent text-white focus:outline-none focus:ring-2 focus:ring-green-600"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1 text-white">
-                    Telefon
-                  </label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={editedUser.phone}
-                    onChange={handleChange}
-                    className="w-full p-2 border-2 border-white/20 rounded-3xl bg-transparent text-white focus:outline-none focus:ring-2 focus:ring-green-600"
-                  />
-                </div>
-                <div className="flex space-x-2">
-                  <button
-                    onClick={handleSave}
-                    className="flex-1 bg-gradient-to-br from-green-400 to-green-600 text-gray-900 py-2 px-6 rounded-full shadow-lg hover:bg-gradient-to-bl hover:shadow-2xl transition duration-300 flex items-center justify-center"
-                  >
-                    <Save className="mr-2" size={18} />
-                    Yadda saxla
-                  </button>
-                  <button
-                    onClick={handleCancel}
-                    className="flex-1 bg-gradient-to-br from-red-400 to-red-600 text-gray-900 py-2 px-6 rounded-full shadow-lg hover:bg-gradient-to-bl hover:shadow-2xl transition duration-300 flex items-center justify-center"
-                  >
-                    <X className="mr-2" size={18} />
-                    Ləğv et
-                  </button>
-                </div>
-              </form>
+              <>
+                <input
+                  type="text"
+                  name="name"
+                  value={editedUser.name}
+                  onChange={handleChange}
+                  className="mt-2 p-2 border rounded w-full"
+                />
+                <p className="text-gray-600 mt-2">{user.email}</p>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={editedUser.phone}
+                  onChange={handleChange}
+                  className="mt-2 p-2 border rounded w-full"
+                />
+              </>
             )}
           </div>
         </div>
-        <div className="md:col-span-2">
-          <div className="bg-[#222] rounded-3xl border-2 border-white/20 shadow-lg p-6 mb-6">
-            <h3 className="text-xl font-semibold text-white mb-4">
-              Statistika
-            </h3>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="text-center">
-                <p className="text-3xl font-bold text-white">
-                  {user.stats.gamesPlayed}
-                </p>
-                <p className="text-gray-400">Oynanılmış oyunlar</p>
-              </div>
-              <div className="text-center">
-                <p className="text-3xl font-bold text-white">
-                  {user.stats.teamsJoined}
-                </p>
-                <p className="text-gray-400">Qoşulduğu komandalar</p>
-              </div>
-              <div className="text-center">
-                <p className="text-3xl font-bold text-white">
-                  {user.stats.reservations}
-                </p>
-                <p className="text-gray-400">Rezervasiyalar</p>
-              </div>
-            </div>
+        {!isEditing ? (
+          <div className="flex space-x-2">
+            <button
+              onClick={handleEdit}
+              className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300"
+            >
+              Redaktə et
+            </button>
+            <button
+              onClick={handleLogout}
+              className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 transition duration-300 flex items-center"
+            >
+              <LogOut size={18} className="mr-2" />
+              Çıxış
+            </button>
           </div>
-
-          <div className="bg-[#222] rounded-3xl border-2 border-white/20 shadow-lg p-6 mb-6">
-            <h3 className="text-xl font-semibold text-white mb-4">
-              Rezervasiya Tarixçəsi
-            </h3>
-            <div className="space-y-4">
-              {user.reservationHistory.map((reservation) => (
-                <div
-                  key={reservation.id}
-                  className="flex items-center justify-between border-b pb-2"
-                >
-                  <div>
-                    <p className="font-semibold text-white">
-                      {reservation.stadium}
-                    </p>
-                    <p className="text-sm text-gray-400 flex items-center">
-                      <Calendar className="mr-1" size={14} />
-                      {reservation.date} | {reservation.time}
-                    </p>
-                  </div>
-                  <p className="font-semibold text-white flex items-center">
-                    <DollarSign className="mr-1" size={14} />
-                    {reservation.price} AZN
-                  </p>
-                </div>
-              ))}
-            </div>
+        ) : (
+          <div className="flex space-x-2">
+            <button
+              onClick={handleSave}
+              className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition duration-300"
+            >
+              Yadda saxla
+            </button>
+            <button
+              onClick={handleCancel}
+              className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 transition duration-300"
+            >
+              Ləğv et
+            </button>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

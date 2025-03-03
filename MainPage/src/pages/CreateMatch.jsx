@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTeams } from "../context/TeamsContext";
 import { useMatches } from "../context/MatchesContext";
@@ -8,33 +8,28 @@ import { useMatches } from "../context/MatchesContext";
 const CreateMatch = () => {
   const navigate = useNavigate();
   const { teams } = useTeams();
-  const { createMatch } = useMatches();
+  const { createMatch, getCompatibleMatches } = useMatches();
   const [selectedTeam, setSelectedTeam] = useState("");
-  const [availableTeams, setAvailableTeams] = useState([]);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null); // Dropdown genişliyini tənzimləmək üçün ref
+  const [compatibleMatches, setCompatibleMatches] = useState([]);
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
   useEffect(() => {
-    // Yalnız tam məlumatları olan komandaları göstər
-    const fullInfoTeams = teams.filter(
-      (team) =>
-        team.name &&
-        team.city &&
-        team.stadium &&
-        team.playDate &&
-        team.playTime &&
-        team.playerCount
-    );
-    setAvailableTeams(fullInfoTeams);
-  }, [teams]);
+    const userTeam = teams.find((team) => team.creator.id === currentUser.id);
+    if (userTeam) {
+      setSelectedTeam(userTeam.id);
+      const matches = getCompatibleMatches(userTeam);
+      setCompatibleMatches(matches);
+    } else {
+      navigate("/teams");
+    }
+  }, [teams, currentUser, navigate, getCompatibleMatches]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const team = availableTeams.find(
-      (t) => t.id === Number.parseInt(selectedTeam)
-    );
+    const team = teams.find((t) => t.id === Number(selectedTeam));
     if (team) {
       const newMatch = {
+        id: Date.now(),
         team: team,
         opponentTeam: null,
         date: team.playDate,
@@ -42,70 +37,62 @@ const CreateMatch = () => {
         stadium: team.stadium,
         playerCount: team.playerCount,
         city: team.city,
+        creator: {
+          id: currentUser.id,
+          name: currentUser.name,
+          profileImage: currentUser.profileImage,
+        },
+        isReady: false,
       };
       createMatch(newMatch);
       navigate("/matches");
     }
   };
 
+  if (compatibleMatches.length > 0) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold mb-6">Uyğun Matçlar Mövcuddur</h1>
+        <p className="mb-4">
+          Sizə uyğun matç(lar) var. Zəhmət olmasa, mövcud matçlara qoşulun.
+        </p>
+        <button
+          onClick={() => navigate("/matches")}
+          className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300"
+        >
+          Matçlara Bax
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-white mb-6">Yeni Matç Yarat</h1>
+      <h1 className="text-3xl font-bold mb-6">Yeni Matç Yarat</h1>
       <form
         onSubmit={handleSubmit}
-        className="max-w-md mx-auto bg-[#333] rounded-3xl shadow-xl p-6"
+        className="max-w-md mx-auto bg-white rounded-lg shadow-md p-6"
       >
-        <div className="mb-6">
-          <label
-            htmlFor="team"
-            className="block text-sm font-medium text-white mb-1"
-          >
-            Komandanı Seç
+        <div className="mb-4">
+          <label htmlFor="team" className="block text-sm font-medium mb-1">
+            Komandanız
           </label>
-
-          <div
-            className="flex items-center border-2 border-white/20 rounded-full p-2 bg-[#222] cursor-pointer transition focus-within:border-gray-500 w-full"
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          <select
+            id="team"
+            value={selectedTeam}
+            onChange={(e) => setSelectedTeam(e.target.value)}
+            className="w-full p-2 border rounded"
+            required
+            disabled
           >
-            <span className="flex-1 text-white px-2">
-              {selectedTeam
-                ? availableTeams.find(
-                    (team) => team.id === Number.parseInt(selectedTeam)
-                  ).name
-                : "Komanda Seçin"}
-            </span>
-          </div>
-
-          {isDropdownOpen && (
-            <div
-              ref={dropdownRef}
-              className="absolute z-10 max-w-100 bg-[#222] border-2 border-white/20 rounded-lg mt-1"
-              style={{
-                width: dropdownRef.current
-                  ? dropdownRef.current.offsetWidth
-                  : "auto",
-              }}
-            >
-              {availableTeams.map((team) => (
-                <div
-                  key={team.id}
-                  onClick={() => {
-                    setSelectedTeam(team.id.toString());
-                    setIsDropdownOpen(false);
-                  }}
-                  className="px-4 py-2 text-white hover:bg-green-400 cursor-pointer border-white/20 rounded-lg"
-                >
-                  {team.name} - {team.city}, {team.stadium}, {team.playDate},{" "}
-                  {team.playTime}, {team.playerCount} oyunçu
-                </div>
-              ))}
-            </div>
-          )}
+            <option value={selectedTeam}>
+              {teams.find((t) => t.id === Number(selectedTeam))?.name}
+            </option>
+          </select>
         </div>
-
         <button
           type="submit"
-          className="w-full bg-gradient-to-br from-green-400 to-green-600 text-gray-900 py-2 px-6 rounded-full shadow-lg hover:bg-gradient-to-bl hover:shadow-2xl transition duration-300"
+          className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300"
         >
           Matç Yarat
         </button>

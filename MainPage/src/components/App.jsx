@@ -1,53 +1,76 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { TeamsProvider } from "../context/TeamsContext.jsx";
-import { MatchesProvider } from "../context/MatchesContext.jsx";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { TeamsProvider } from "../context/TeamsContext";
+import { MatchesProvider } from "../context/MatchesContext";
 import { ChatProvider } from "../context/ChatContext";
-import Teams from "../pages/Teams.jsx";
-import CreateTeam from "../pages/CreateTeam.jsx";
-import "../fonts/Ravio-Regular.ttf";
-import SideBar from "./SideBar.jsx";
-import Stadiums from "../pages/Stadiums.jsx";
-import StadiumDetails from "../pages/StadiumsDetails.jsx";
-import ReservationProcess from "../pages/ReservationProcess.jsx";
-import PaymentProcess from "../pages/PaymentProcess.jsx";
-import PaymentConfirmation from "../pages/PaymentConfirmation.jsx";
-import Profile from "../pages/Profile.jsx";
-import TeamDetails from "../pages/TeamDetails.jsx";
-import Matches from "../pages/Matches.jsx";
-import CreateMatch from "../pages/CreateMatch.jsx";
+import { ReservationProvider } from "../context/ReservationContext";
+import SideBar from "../components/SideBar";
+import Stadiums from "../pages/Stadiums";
+import StadiumDetails from "../pages/StadiumsDetails";
+import ReservationProcess from "../pages/ReservationProcess";
+import PaymentProcess from "../pages/PaymentProcess";
+import PaymentConfirmation from "../pages/PaymentConfirmation";
+import Profile from "../pages/Profile";
+import Teams from "../pages/Teams";
+import CreateTeam from "../pages/CreateTeam";
+import TeamDetails from "../pages/TeamDetails";
+import Matches from "../pages/Matches";
+import CreateMatch from "../pages/CreateMatch";
 import Chat from "../pages/Chat";
+import Login from "../pages/Login";
+import Register from "../pages/Register";
 
 function App() {
   return (
     <TeamsProvider>
       <MatchesProvider>
         <ChatProvider>
-          <Router>
-            <div className="flex">
-              <SideBar />
-              <div className="flex-1 lg:ml-64 p-4 transition-all duration-300">
-                <Routes>
-                  <Route path="/stadiums" element={<Stadiums />} />
-                  <Route path="/stadium/:id" element={<StadiumDetails />} />
-                  <Route path="/reservation/:id" element={<ReservationProcess />} />
-                  <Route path="/payment-process" element={<PaymentProcess />} />
-                  <Route path="/payment-confirmation" element={<PaymentConfirmation />} />
-                  <Route path="/profile" element={<Profile />} />
-                  <Route path="/teams" element={<Teams />} />
-                  <Route path="/create-team" element={<CreateTeam />} />
-                  <Route path="/team/:id" element={<TeamDetails />} />
-                  <Route path="/matches" element={<Matches />} />
-                  <Route path="/create-match" element={<CreateMatch />} />
-                  <Route path="/chat" element={<Chat />} />
-                </Routes>
+          <ReservationProvider>
+            <Router>
+              <div className="flex">
+                <SideBar />
+                <div className="flex-1 lg:ml-64 p-4 transition-all duration-300">
+                  <Routes>
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route
+                      path="/"
+                      element={<Navigate to="/stadiums" replace />}
+                    />
+                    <Route path="/stadiums" element={<Stadiums />} />
+                    <Route path="/stadium/:id" element={<StadiumDetails />} />
+                    <Route
+                      path="/reservation/:id"
+                      element={<ReservationProcess />}
+                    />
+                    <Route
+                      path="/payment-process"
+                      element={<PaymentProcess />}
+                    />
+                    <Route
+                      path="/payment-confirmation"
+                      element={<PaymentConfirmation />}
+                    />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/teams" element={<Teams />} />
+                    <Route path="/create-team" element={<CreateTeam />} />
+                    <Route path="/team/:id" element={<TeamDetails />} />
+                    <Route path="/matches" element={<Matches />} />
+                    <Route path="/create-matches" element={<CreateMatch />} />
+                    <Route path="/chat/:teamId" element={<Chat />} />
+                  </Routes>
+                </div>
               </div>
-            </div>
-          </Router>
+            </Router>
+          </ReservationProvider>
         </ChatProvider>
       </MatchesProvider>
     </TeamsProvider>
-  )
+  );
 }
 
 export default App;
