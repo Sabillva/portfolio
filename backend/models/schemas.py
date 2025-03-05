@@ -55,7 +55,7 @@ class OwnerApplicationCreate(BaseModel):
     seating_area: bool
     equipment_rental: Optional[str] = None
     opening_hours: str
-    pricing: float
+    pricing: str
     cafe: bool
     pitch_photos: Optional[List[str]] = None  # List of image URLs
     other_details: Optional[str] = None

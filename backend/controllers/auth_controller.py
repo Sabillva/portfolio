@@ -28,9 +28,6 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    if user.role == "admin":
-        return AuthService.create_token(user, unexpiring=True)
-
     return AuthService.create_token(user)
 
 
@@ -99,7 +96,7 @@ def approve_owner(
         user.role = "owner"
 
         stadium = Stadium(
-            owner=user.username,
+            owner_id=user.id,
             email=applicant.email,
             stadium_name=applicant.stadium_name,
             location=applicant.location,

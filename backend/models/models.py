@@ -1,4 +1,6 @@
-from sqlalchemy import Column, Integer, String, Boolean, Text, Float, JSON, Enum
+from sqlalchemy import Column, Integer, String, Boolean, Text, Float, JSON, Enum, ForeignKey, Date
+from sqlalchemy.orm import relationship
+
 from backend.database import Base_Model
 
 
@@ -10,7 +12,9 @@ class AppUser(Base_Model):
     email = Column(String(100), unique=True, index=True)
     hashed_password = Column(String(255))
     role = Column(String(50), default="user")
-    is_owner = Column(Boolean, default=False)
+
+    stadiums = relationship("Stadium", back_populates="owner")
+    reservations = relationship("Reservation", back_populates="user")
 
 class Applicant(Base_Model):
     __tablename__ = "applicants"
@@ -48,11 +52,11 @@ class Stadium(Base_Model):
     __tablename__ = "stadiums"
 
     id = Column(Integer, primary_key=True, index=True)
-    email = Column(String(100), unique=True, index=True, nullable=False)  # Owner's email
-    owner = Column(String(100), unique=True, index=True, nullable=False)  # Owner's username
+    email = Column(String(100), unique=True, index=True, nullable=False)
+    owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
     stadium_name = Column(String(150), nullable=False)
-    location = Column(Text, nullable=False)  # Increased for better address support
+    location = Column(Text, nullable=False)
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False)
 
@@ -73,6 +77,23 @@ class Stadium(Base_Model):
     opening_hours = Column(Text, nullable=False)
     pricing = Column(Text, nullable=False)
     cafe = Column(Boolean, nullable=False)
-    pitch_photos = Column(JSON, nullable=True)  # List of image URLs
+    pitch_photos = Column(JSON, nullable=True)
     other_details = Column(Text, nullable=True)
 
+    owner = relationship("AppUser", back_populates="stadiums")
+    reservations = relationship("Reservation", back_populates="stadium")
+
+class Reservation(Base_Model):
+    __tablename__ = "reservations"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    stadium_id = Column(Integer, ForeignKey("stadiums.id"), nullable=False)
+    date = Column(Date, nullable=False)
+    time_slot = Column(String(20), nullable=False)  # Example: "13:00-14:00"
+    status = Column(Enum("pending", "accepted", "rejected", "canceled"), default="pending")
+    payment_status = Column(Enum("pending", "successful", "rejected"), default="pending")
+
+    # Relationships
+    user = relationship("AppUser", back_populates="reservations")
+    stadium = relationship("Stadium", back_populates="reservations")

@@ -40,7 +40,7 @@ class AuthService:
         # If there's an approved application, insert into stadiums
         if applicant:
             stadium = Stadium(
-                owner=new_user.username,
+                owner_id=new_user.id,
                 email=applicant.email,
                 stadium_name=applicant.stadium_name,
                 location=applicant.location,
