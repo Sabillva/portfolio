@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
+from fastapi import UploadFile
 from pydantic import BaseModel, EmailStr
 
 
@@ -93,7 +94,35 @@ class TournamentResponse(TournamentBase):
     id: int
     user_id: int
     stadium: StadiumResponse  # Include full stadium details
-    created_at: datetime
     is_approved: bool
     created_at: datetime
     updated_at: datetime
+
+
+# --- Post Schemas ---
+class PostBase(BaseModel):
+    caption: str
+    description: Optional[str] = None
+    stadium_id: int  # Single stadium ID (one-to-many relationship)
+
+
+class PostCreate(PostBase):
+    pass
+
+
+class PostUpdate(BaseModel):
+    caption: Optional[str] = None
+    description: Optional[str] = None
+    stadium_id: Optional[int] = None  # Allow updating the stadium ID
+
+
+class PostResponse(PostBase):
+    id: int
+    user_id: int
+    image_url: str  # Path to the uploaded image
+    stadium: StadiumResponse  # Include full stadium details
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True  # Enable ORM mode

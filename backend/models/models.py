@@ -52,12 +52,15 @@ class Stadium(Base_Model):
     pitch_photos = Column(JSON, nullable=True)  # List of image URLs
     other_details = Column(Text, nullable=True)
 
+    approve_status = Column(Boolean, default=False)
+
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)  # Stadium owner
 
     # Reverse relationship: One stadium can have many tournaments
     tournaments = relationship("Tournament", back_populates="stadium", cascade="all, delete")
     posts = relationship("Post", back_populates="stadium", cascade="all, delete")
     owner = relationship("AppUser", back_populates="stadiums")
+
 
 class Tournament(Base_Model):
     __tablename__ = "tournaments"
@@ -72,13 +75,14 @@ class Tournament(Base_Model):
     # Relationship to Stadium (One tournament belongs to one stadium)
     stadium = relationship("Stadium", back_populates="tournaments")
 
+
 class Post(Base_Model):
     __tablename__ = "posts"
 
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String(255), nullable=False)
+    caption = Column(String(255), nullable=False)
     description = Column(Text, nullable=True)
-    photo_path = Column(String(255), nullable=False)    # Path to the uploaded photo
+    image_url = Column(String(255), nullable=False)  # Path to the uploaded photo
     stadium_id = Column(Integer, ForeignKey("stadiums.id"), nullable=False)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
@@ -87,6 +91,7 @@ class Post(Base_Model):
     user = relationship("AppUser", back_populates="posts")
     comments = relationship("Comment", back_populates="post", cascade="all, delete")
     likes = relationship("Like", back_populates="post", cascade="all, delete")
+
 
 class Comment(Base_Model):
     __tablename__ = "comments"
@@ -100,6 +105,7 @@ class Comment(Base_Model):
     user = relationship("AppUser", back_populates="comments")
     post = relationship("Post", back_populates="comments")
 
+
 class Like(Base_Model):
     __tablename__ = "likes"
 
@@ -110,8 +116,3 @@ class Like(Base_Model):
     # Relationships
     user = relationship("AppUser", back_populates="likes")
     post = relationship("Post", back_populates="likes")
-
-
-
-
-
