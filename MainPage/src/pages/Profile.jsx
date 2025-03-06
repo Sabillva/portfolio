@@ -1,73 +1,110 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Edit2, LogOut } from "lucide-react"
-import { useNavigate } from "react-router-dom"
-import { useTeams } from "../context/TeamsContext"
+import { useState, useEffect } from "react";
+import { Edit2, LogOut } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useTeams } from "../context/TeamsContext";
 
 const Profile = () => {
-  const [user, setUser] = useState(null)
-  const [isEditing, setIsEditing] = useState(false)
-  const [editedUser, setEditedUser] = useState(null)
-  const navigate = useNavigate()
-  const { updateUserInTeams } = useTeams()
+  const [user, setUser] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedUser, setEditedUser] = useState(null);
+  const navigate = useNavigate();
+  const { updateUserInTeams } = useTeams();
 
   useEffect(() => {
-    const currentUser = JSON.parse(localStorage.getItem("currentUser"))
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
     if (currentUser) {
-      setUser(currentUser)
-      setEditedUser(currentUser)
+      setUser(currentUser);
+      setEditedUser(currentUser);
     }
-  }, [])
+  }, []);
 
   const handleEdit = () => {
-    setIsEditing(true)
-  }
+    setIsEditing(true);
+  };
 
   const handleSave = () => {
-    setUser(editedUser)
-    setIsEditing(false)
-
-    // Istifadəçi məlumatlarını yenilə
-    localStorage.setItem("currentUser", JSON.stringify(editedUser))
-
-    const users = JSON.parse(localStorage.getItem("users")) || []
-    const updatedUsers = users.map((u) => (u.id === editedUser.id ? editedUser : u))
-    localStorage.setItem("users", JSON.stringify(updatedUsers))
-
-    // TeamsContext'də istifadəçi məlumatlarını yenilə
-    updateUserInTeams(editedUser)
-  }
+    try {
+      setUser(editedUser);
+      setIsEditing(false);
+      localStorage.setItem("currentUser", JSON.stringify(editedUser));
+      updateUserInTeams(editedUser);
+    } catch (error) {
+      console.error("Error saving user data:", error);
+      alert(
+        "İstifadəçi məlumatlarını yadda saxlamaq mümkün olmadı. Zəhmət olmasa, yenidən cəhd edin."
+      );
+    }
+  };
 
   const handleCancel = () => {
-    setEditedUser(user)
-    setIsEditing(false)
-  }
+    setEditedUser(user);
+    setIsEditing(false);
+  };
 
   const handleChange = (e) => {
-    const { name, value } = e.target
-    setEditedUser((prev) => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setEditedUser((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0]
+    const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader()
+      const reader = new FileReader();
       reader.onloadend = () => {
-        const newProfileImage = reader.result
-        setEditedUser((prev) => ({ ...prev, profileImage: newProfileImage }))
-      }
-      reader.readAsDataURL(file)
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+          const maxWidth = 200;
+          const maxHeight = 200;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > maxWidth) {
+              height *= maxWidth / width;
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width *= maxHeight / height;
+              height = maxHeight;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const resizedImage = canvas.toDataURL("image/jpeg", 0.7);
+          const updatedUser = { ...user, profileImage: resizedImage };
+          setUser(updatedUser);
+          setEditedUser(updatedUser);
+          try {
+            localStorage.setItem("currentUser", JSON.stringify(updatedUser));
+            updateUserInTeams(updatedUser);
+          } catch (error) {
+            console.error("Error saving profile image:", error);
+            alert(
+              "Profil şəklini yükləmək mümkün olmadı. Zəhmət olmasa, daha kiçik ölçülü şəkil seçin."
+            );
+          }
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
     }
-  }
+  };
 
   const handleLogout = () => {
-    localStorage.removeItem("currentUser")
-    localStorage.setItem("isLoggedIn", "false")
-    navigate("/login")
-  }
+    localStorage.removeItem("currentUser");
+    localStorage.setItem("isLoggedIn", "false");
+    navigate("/login");
+  };
 
-  if (!user) return <div>Loading...</div>
+  if (!user) return <div>Loading...</div>;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -157,8 +194,7 @@ const Profile = () => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Profile
-
+export default Profile;

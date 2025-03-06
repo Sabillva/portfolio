@@ -1,7 +1,7 @@
-import Azal from "../images/azal-arena.jpg"
-import Dalga from "../images/dalga-arena.jpg"
-import KapitalBank from "../images/kapital-bank-arena.jpg"
-import Kepez from "../images/kepez-arena.jpg"
+import Azal from "../images/azal-arena.jpg";
+import Dalga from "../images/dalga-arena.jpg";
+import KapitalBank from "../images/kapital-bank-arena.jpg";
+import Kepez from "../images/kepez-arena.jpg";
 
 export const stadiumsData = [
   {
@@ -11,7 +11,12 @@ export const stadiumsData = [
     image: Azal,
     distance: 2.5,
     price: 50,
-    availableHours: ["10:00-11:00", "11:00-12:00", "12:00-13:00", "13:00-14:00"],
+    availableHours: [
+      "10:00-11:00",
+      "11:00-12:00",
+      "12:00-13:00",
+      "13:00-14:00",
+    ],
     facilities: {
       shower: true,
       changingRoom: true,
@@ -27,7 +32,12 @@ export const stadiumsData = [
     image: Dalga,
     distance: 5.1,
     price: 60,
-    availableHours: ["14:00-15:00", "15:00-16:00", "16:00-17:00", "17:00-18:00"],
+    availableHours: [
+      "14:00-15:00",
+      "15:00-16:00",
+      "16:00-17:00",
+      "17:00-18:00",
+    ],
     facilities: {
       shower: true,
       changingRoom: true,
@@ -59,7 +69,13 @@ export const stadiumsData = [
     image: Kepez,
     distance: 360.2,
     price: 40,
-    availableHours: ["10:00-11:00", "11:00-12:00", "12:00-13:00", "13:00-14:00", "14:00-15:00"],
+    availableHours: [
+      "10:00-11:00",
+      "11:00-12:00",
+      "12:00-13:00",
+      "13:00-14:00",
+      "14:00-15:00",
+    ],
     facilities: {
       shower: true,
       changingRoom: true,
@@ -69,5 +85,4 @@ export const stadiumsData = [
     },
   },
   // Daha çox stadion əlavə edə bilərəm
-]
-
+];
