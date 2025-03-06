@@ -126,3 +126,26 @@ class PostResponse(PostBase):
 
     class Config:
         from_attributes = True  # Enable ORM mode
+
+
+# --- Comment Schemas ---
+class CommentCreate(BaseModel):
+    message: str
+    post_id: int
+
+
+class CommentUpdate(BaseModel):
+    message: Optional[str] = None
+
+
+class CommentResponse(BaseModel):
+    id: int
+    message: str
+    user_id: int
+    post_id: int
+    created_at: datetime
+    updated_at: datetime
+
+
+    class Config:
+        from_attributes = True
