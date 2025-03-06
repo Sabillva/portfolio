@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useLocation } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useTeams } from "../context/TeamsContext";
 import { stadiumsData } from "../data/stadiumsData";
 
@@ -19,7 +19,7 @@ const CreateTeam = () => {
   const [logo, setLogo] = useState(null);
   const [joinMatch, setJoinMatch] = useState(false);
   const [isReserved, setIsReserved] = useState(false);
-  // const location = useLocation();
+  const location = useLocation();
 
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
@@ -122,6 +122,7 @@ const CreateTeam = () => {
       ],
       joinMatch,
       isReady: false,
+      logo: logo,
     };
 
     addTeam(newTeam);
@@ -138,6 +139,7 @@ const CreateTeam = () => {
         playerCount,
         stadiumId,
         joinMatch,
+        fromCreateTeam: true,
       },
     });
   };

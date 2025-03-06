@@ -31,6 +31,12 @@ export const MatchesProvider = ({ children }) => {
     localStorage.setItem("matches", JSON.stringify(updatedMatches));
   };
 
+  const removeMatch = (matchId) => {
+    const updatedMatches = matches.filter((match) => match.id !== matchId);
+    setMatches(updatedMatches);
+    localStorage.setItem("matches", JSON.stringify(updatedMatches));
+  };
+
   const getMatchesByTeam = (teamId) => {
     return matches.filter(
       (match) =>
@@ -59,6 +65,7 @@ export const MatchesProvider = ({ children }) => {
         joinMatch,
         getMatchesByTeam,
         getCompatibleMatches,
+        removeMatch,
       }}
     >
       {children}

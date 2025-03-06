@@ -7,7 +7,7 @@ import { useTeams } from "../context/TeamsContext";
 import { MapPin, Calendar, Clock, Users, Swords } from "lucide-react";
 
 const Matches = () => {
-  const { matches, joinMatch } = useMatches();
+  const { matches, joinMatch, removeMatch } = useMatches();
   const { teams } = useTeams();
   const [filteredMatches, setFilteredMatches] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -47,6 +47,12 @@ const Matches = () => {
     }
   };
 
+  const handleRemoveMatch = (matchId) => {
+    if (window.confirm("Bu matçı silmək istədiyinizə əminsiniz?")) {
+      removeMatch(matchId);
+    }
+  };
+
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
@@ -68,7 +74,7 @@ const Matches = () => {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Matçlar</h1>
         <Link
-          to="/create-matches"
+          to="/create-match"
           className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 flex items-center"
         >
           <Swords className="mr-2" size={18} />
@@ -176,6 +182,14 @@ const Matches = () => {
                 >
                   Ödənişə Keç
                 </Link>
+              )}
+              {match.team.creator.id === currentUser.id && (
+                <button
+                  onClick={() => handleRemoveMatch(match.id)}
+                  className="mt-2 w-full bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 transition duration-300"
+                >
+                  Matçı Sil
+                </button>
               )}
             </div>
           ))}

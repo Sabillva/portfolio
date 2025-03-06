@@ -15,9 +15,17 @@ export const TeamsProvider = ({ children }) => {
   }, []);
 
   const addTeam = (team) => {
-    const updatedTeams = [...teams, team];
-    setTeams(updatedTeams);
-    localStorage.setItem("teams", JSON.stringify(updatedTeams));
+    const existingTeam = teams.find((t) => t.id === team.id);
+    if (!existingTeam) {
+      const updatedTeams = [...teams, team];
+      setTeams(updatedTeams);
+      try {
+        localStorage.setItem("teams", JSON.stringify(updatedTeams));
+      } catch (error) {
+        console.error("Error saving team to localStorage:", error);
+        // Handle the error (e.g., remove oldest team, compress data, etc.)
+      }
+    }
   };
 
   const updateTeam = (updatedTeam) => {
@@ -25,7 +33,11 @@ export const TeamsProvider = ({ children }) => {
       team.id === updatedTeam.id ? updatedTeam : team
     );
     setTeams(updatedTeams);
-    localStorage.setItem("teams", JSON.stringify(updatedTeams));
+    try {
+      localStorage.setItem("teams", JSON.stringify(updatedTeams));
+    } catch (error) {
+      console.error("Error updating team in localStorage:", error);
+    }
   };
 
   const removeTeam = (teamId) => {
@@ -34,15 +46,36 @@ export const TeamsProvider = ({ children }) => {
     localStorage.setItem("teams", JSON.stringify(updatedTeams));
   };
 
+  const isUserInAnyTeam = (userId) => {
+    return teams.some((team) =>
+      team.members.some((member) => member.id === userId)
+    );
+  };
+
   const joinTeam = (teamId, user) => {
+    if (isUserInAnyTeam(user.id)) {
+      console.log("İstifadəçi artıq bir komandadadır.");
+      return false;
+    }
+
     const updatedTeams = teams.map((team) => {
       if (team.id === teamId && team.members.length < team.playerCount) {
-        return { ...team, members: [...team.members, user] };
+        const isMemberAlready = team.members.some(
+          (member) => member.id === user.id
+        );
+        if (!isMemberAlready) {
+          return {
+            ...team,
+            members: [...team.members, { ...user, isCreator: false }],
+            chatMembers: [...team.chatMembers, user],
+          };
+        }
       }
       return team;
     });
     setTeams(updatedTeams);
     localStorage.setItem("teams", JSON.stringify(updatedTeams));
+    return true;
   };
 
   const leaveTeam = (teamId, userId) => {
@@ -97,6 +130,25 @@ export const TeamsProvider = ({ children }) => {
     localStorage.setItem("teams", JSON.stringify(updatedTeams));
   };
 
+  const updateUserInTeams = (updatedUser) => {
+    const updatedTeams = teams.map((team) => ({
+      ...team,
+      members: team.members.map((member) =>
+        member.id === updatedUser.id ? { ...member, ...updatedUser } : member
+      ),
+      creator:
+        team.creator.id === updatedUser.id
+          ? { ...team.creator, ...updatedUser }
+          : team.creator,
+    }));
+    setTeams(updatedTeams);
+    try {
+      localStorage.setItem("teams", JSON.stringify(updatedTeams));
+    } catch (error) {
+      console.error("Error updating user in teams in localStorage:", error);
+    }
+  };
+
   return (
     <TeamsContext.Provider
       value={{
@@ -109,6 +161,8 @@ export const TeamsProvider = ({ children }) => {
         removeFromChat,
         updatePlayerCount,
         setTeamReady,
+        updateUserInTeams,
+        isUserInAnyTeam,
       }}
     >
       {children}

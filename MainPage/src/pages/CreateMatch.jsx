@@ -14,7 +14,9 @@ const CreateMatch = () => {
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
   useEffect(() => {
-    const userTeam = teams.find((team) => team.creator.id === currentUser.id);
+    const userTeam = teams.find(
+      (team) => team.creator.id === currentUser.id && team.isReady
+    );
     if (userTeam) {
       setSelectedTeam(userTeam.id);
       const matches = getCompatibleMatches(userTeam);
@@ -27,7 +29,7 @@ const CreateMatch = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const team = teams.find((t) => t.id === Number(selectedTeam));
-    if (team) {
+    if (team && team.isReady && team.joinMatch) {
       const newMatch = {
         id: Date.now(),
         team: team,
@@ -46,6 +48,8 @@ const CreateMatch = () => {
       };
       createMatch(newMatch);
       navigate("/matches");
+    } else {
+      alert("Komandanız hazır deyil və ya matça qoşulmaq üçün seçilməyib.");
     }
   };
 

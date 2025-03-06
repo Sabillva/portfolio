@@ -12,6 +12,7 @@ const TeamDetails = () => {
     removeFromChat,
     updatePlayerCount,
     setTeamReady,
+    removeTeam,
   } = useTeams();
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
@@ -55,8 +56,29 @@ const TeamDetails = () => {
   };
 
   const handleSetReady = () => {
-    setTeamReady(team.id, true);
-    navigate("/payment-process", { state: { teamId: team.id } });
+    if (team.members.length === team.playerCount) {
+      setTeamReady(team.id, true);
+      alert("Komanda hazır vəziyyətə gətirildi!");
+    } else {
+      alert(
+        "Komandanı hazır etmək üçün bütün oyunçu yerlərinin dolu olması lazımdır."
+      );
+    }
+  };
+
+  const handleDeleteTeam = () => {
+    if (isCreator) {
+      if (window.confirm("Bu komandanı silmək istədiyinizə əminsiniz?")) {
+        removeTeam(team.id);
+        navigate("/teams");
+      }
+    }
+  };
+
+  const handlePayment = () => {
+    if (isCreator && team.isReady) {
+      navigate("/payment-process", { state: { teamId: team.id } });
+    }
   };
 
   return (
@@ -128,12 +150,12 @@ const TeamDetails = () => {
 
         {isCreator &&
           !team.isReady &&
-          team.currentPlayers === team.playerCount && (
+          team.members.length === team.playerCount && (
             <button
               onClick={handleSetReady}
               className="mt-4 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition duration-300"
             >
-              Komandanı hazır et
+              Komandanı Hazır Et
             </button>
           )}
 
@@ -146,12 +168,21 @@ const TeamDetails = () => {
           </button>
         )}
 
-        {team.isReady && !team.joinMatch && (
+        {isCreator && (
           <button
-            onClick={() => navigate("/payment-process")}
-            className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300"
+            onClick={handleDeleteTeam}
+            className="mt-4 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 transition duration-300"
           >
-            Ödəniş et
+            Komandanı Sil
+          </button>
+        )}
+
+        {isCreator && team.isReady && (
+          <button
+            onClick={handlePayment}
+            className="mt-4 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition duration-300"
+          >
+            Ödəniş Et
           </button>
         )}
       </div>

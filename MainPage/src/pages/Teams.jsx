@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useTeams } from "../context/TeamsContext";
 import {
@@ -14,9 +14,15 @@ import {
 } from "lucide-react";
 
 const Teams = () => {
-  const { teams, joinTeam } = useTeams();
+  const { teams, joinTeam, isUserInAnyTeam } = useTeams();
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCity, setFilterCity] = useState("");
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    setCurrentUser(user);
+  }, []);
 
   const filteredTeams = teams.filter(
     (team) =>
@@ -25,9 +31,22 @@ const Teams = () => {
   );
 
   const handleJoinTeam = (teamId) => {
-    // Normalde burada istifadəçi məlumatlarını almalısınız
-    const newMember = { id: Date.now(), name: "Yeni Üzv" };
-    joinTeam(teamId, newMember);
+    if (currentUser) {
+      if (isUserInAnyTeam(currentUser.id)) {
+        alert(
+          "Siz artıq bir komandadasınız. Eyni vaxtda yalnız bir komandada ola bilərsiniz."
+        );
+      } else {
+        const success = joinTeam(teamId, currentUser);
+        if (success) {
+          alert("Komandaya uğurla qoşuldunuz!");
+        } else {
+          alert(
+            "Komandaya qoşulmaq mümkün olmadı. Zəhmət olmasa yenidən cəhd edin."
+          );
+        }
+      }
+    }
   };
 
   return (
@@ -102,8 +121,25 @@ const Teams = () => {
                 </p>
                 <p className="flex items-center text-gray-600">
                   <Users className="mr-2" size={18} />
-                  {team.currentPlayers} / {team.playerCount} oyunçu
+                  {team.members.length} / {team.playerCount} oyunçu
                 </p>
+              </div>
+              <div className="mt-4">
+                <h3 className="font-semibold mb-2">Komanda Üzvləri:</h3>
+                <ul className="space-y-2">
+                  {team.members.map((member, index) => (
+                    <li key={index} className="flex items-center">
+                      <img
+                        src={member.profileImage || "/placeholder.svg"}
+                        alt={member.name}
+                        className="w-8 h-8 rounded-full mr-2"
+                      />
+                      <span>
+                        {member.name} {member.isCreator ? "(Yaradıcı)" : ""}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
               </div>
               <Link
                 to={`/team/${team.id}`}
@@ -111,7 +147,7 @@ const Teams = () => {
               >
                 Ətraflı Bax
               </Link>
-              {team.currentPlayers < team.playerCount && (
+              {team.members.length < team.playerCount && (
                 <button
                   onClick={() => handleJoinTeam(team.id)}
                   className="mt-2 w-full bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition duration-300"

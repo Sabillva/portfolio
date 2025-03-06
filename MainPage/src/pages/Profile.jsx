@@ -1,83 +1,73 @@
-"use client";
+"use client"
 
-import { useState, useEffect } from "react";
-import { Edit2, LogOut } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react"
+import { Edit2, LogOut } from "lucide-react"
+import { useNavigate } from "react-router-dom"
+import { useTeams } from "../context/TeamsContext"
 
 const Profile = () => {
-  const [user, setUser] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedUser, setEditedUser] = useState(null);
-  const navigate = useNavigate();
+  const [user, setUser] = useState(null)
+  const [isEditing, setIsEditing] = useState(false)
+  const [editedUser, setEditedUser] = useState(null)
+  const navigate = useNavigate()
+  const { updateUserInTeams } = useTeams()
 
   useEffect(() => {
-    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"))
     if (currentUser) {
-      setUser(currentUser);
-      setEditedUser(currentUser);
+      setUser(currentUser)
+      setEditedUser(currentUser)
     }
-  }, []);
+  }, [])
 
   const handleEdit = () => {
-    setIsEditing(true);
-  };
+    setIsEditing(true)
+  }
 
   const handleSave = () => {
-    setUser(editedUser);
-    setIsEditing(false);
+    setUser(editedUser)
+    setIsEditing(false)
 
     // Istifadəçi məlumatlarını yenilə
-    const users = JSON.parse(localStorage.getItem("users")) || [];
-    const updatedUsers = users.map((u) =>
-      u.id === editedUser.id ? { ...u, ...editedUser, email: u.email } : u
-    );
-    localStorage.setItem("users", JSON.stringify(updatedUsers));
-    localStorage.setItem(
-      "currentUser",
-      JSON.stringify({ ...editedUser, email: user.email })
-    );
-  };
+    localStorage.setItem("currentUser", JSON.stringify(editedUser))
+
+    const users = JSON.parse(localStorage.getItem("users")) || []
+    const updatedUsers = users.map((u) => (u.id === editedUser.id ? editedUser : u))
+    localStorage.setItem("users", JSON.stringify(updatedUsers))
+
+    // TeamsContext'də istifadəçi məlumatlarını yenilə
+    updateUserInTeams(editedUser)
+  }
 
   const handleCancel = () => {
-    setEditedUser(user);
-    setIsEditing(false);
-  };
+    setEditedUser(user)
+    setIsEditing(false)
+  }
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setEditedUser((prev) => ({ ...prev, [name]: value }));
-  };
+    const { name, value } = e.target
+    setEditedUser((prev) => ({ ...prev, [name]: value }))
+  }
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files[0]
     if (file) {
-      const reader = new FileReader();
+      const reader = new FileReader()
       reader.onloadend = () => {
-        const newProfileImage = reader.result;
-        setEditedUser((prev) => ({ ...prev, profileImage: newProfileImage }));
-        // Save to localStorage immediately
-        const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-        const updatedUser = { ...currentUser, profileImage: newProfileImage };
-        localStorage.setItem("currentUser", JSON.stringify(updatedUser));
-
-        // Update users array in localStorage
-        const users = JSON.parse(localStorage.getItem("users")) || [];
-        const updatedUsers = users.map((u) =>
-          u.id === currentUser.id ? updatedUser : u
-        );
-        localStorage.setItem("users", JSON.stringify(updatedUsers));
-      };
-      reader.readAsDataURL(file);
+        const newProfileImage = reader.result
+        setEditedUser((prev) => ({ ...prev, profileImage: newProfileImage }))
+      }
+      reader.readAsDataURL(file)
     }
-  };
+  }
 
   const handleLogout = () => {
-    localStorage.removeItem("currentUser");
-    localStorage.setItem("isLoggedIn", "false");
-    navigate("/login");
-  };
+    localStorage.removeItem("currentUser")
+    localStorage.setItem("isLoggedIn", "false")
+    navigate("/login")
+  }
 
-  if (!user) return <div>Loading...</div>;
+  if (!user) return <div>Loading...</div>
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -167,7 +157,8 @@ const Profile = () => {
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Profile;
+export default Profile
+

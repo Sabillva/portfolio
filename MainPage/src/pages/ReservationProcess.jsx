@@ -72,7 +72,12 @@ const ReservationProcess = () => {
         ).toISOString(), // 24 hours from now
       };
       addReservation(reservation);
-      navigate("/payment-process", { state: { reservation } });
+      navigate("/payment-process", {
+        state: {
+          reservation,
+          teamData: location.state, // Team yaratma səhifəsindən gələn məlumatlar
+        },
+      });
     }
   };
 
@@ -81,8 +86,9 @@ const ReservationProcess = () => {
       state: {
         ...location.state,
         isReserved: true,
-        playDate: selectedDate,
+        playDate: selectedDate.toISOString().split("T")[0],
         playTime: selectedTime,
+        stadiumId: stadium.id,
       },
     });
   };
