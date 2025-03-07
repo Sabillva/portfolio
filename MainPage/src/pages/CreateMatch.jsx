@@ -6,21 +6,20 @@ import { useTeams } from "../context/TeamsContext";
 import { useMatches } from "../context/MatchesContext";
 import { Swords, AlertTriangle, Loader } from "lucide-react";
 
-
 const CreateMatch = () => {
   const navigate = useNavigate();
   const { teams } = useTeams();
-  const { createMatch, getCompatibleMatches } = useMatches();
+  const { createMatch, getCompatibleMatches, matches } = useMatches();
   const [selectedTeam, setSelectedTeam] = useState("");
   const [compatibleMatches, setCompatibleMatches] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
-  // This is the problematic useEffect - let's fix it
+  // First, check if we have a current user
   useEffect(() => {
-    // First, check if we have a current user
     if (!currentUser) {
       navigate("/login");
       return;
@@ -43,17 +42,21 @@ const CreateMatch = () => {
 
     // We'll check for compatible matches in a separate effect
     setLoading(false);
-  }, [currentUser, navigate, teams]); // Only depend on these values
+  }, [currentUser, navigate, teams]);
 
-  // Separate effect for checking compatible matches
+  // Check for compatible matches when team selection changes
   useEffect(() => {
     if (!selectedTeam || loading) return;
 
     try {
       const team = teams.find((t) => t.id === Number(selectedTeam));
       if (team) {
-        const matches = getCompatibleMatches(team);
-        setCompatibleMatches(matches);
+        // Check if there are already compatible matches
+        if (typeof getCompatibleMatches === "function") {
+          const compatibleMatchesList = getCompatibleMatches(team);
+          setCompatibleMatches(compatibleMatchesList || []);
+          console.log("Compatible matches:", compatibleMatchesList);
+        }
       }
     } catch (err) {
       console.error("Error getting compatible matches:", err);
@@ -74,6 +77,9 @@ const CreateMatch = () => {
     e.preventDefault();
     setError("");
 
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
     try {
       const team = teams.find((t) => t.id === Number(selectedTeam));
 
@@ -81,44 +87,55 @@ const CreateMatch = () => {
         throw new Error("Komanda tapılmadı");
       }
 
-      const newMatch = {
-        id: Date.now(),
-        team: {
-          id: team.id,
-          name: team.name,
-          city: team.city,
-          playDate: team.playDate,
-          playTime: team.playTime,
-          playerCount: team.playerCount,
-          stadium: team.stadium,
-          stadiumId: team.stadiumId,
-          creator: {
-            id: team.creator.id,
-            name: team.creator.name,
-            profileImage: team.creator.profileImage,
-          },
-        },
-        opponentTeam: null,
-        date: team.playDate,
-        time: team.playTime,
-        stadium: team.stadium,
-        playerCount: team.playerCount,
-        city: team.city,
-        stadiumId: team.stadiumId,
-        creator: {
-          id: currentUser.id,
-          name: currentUser.name,
-          profileImage: currentUser.profileImage,
-        },
-        isReady: false,
-        createdAt: new Date().toISOString(),
-      };
+      // Check if team is ready
+      if (!team.isReady) {
+        setError("Komandanız hazır deyil");
+        setIsSubmitting(false);
+        return;
+      }
 
-      createMatch(newMatch);
-      navigate("/matches");
+      // Check if there are compatible matches
+      if (compatibleMatches && compatibleMatches.length > 0) {
+        setError(
+          "Sizə uyğun matçlar var. Zəhmət olmasa, mövcud matçlara qoşulun."
+        );
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Check if team already has a pending match
+      const hasExistingMatch = matches.some(
+        (match) =>
+          (match.team1?.id === team.id || match.team2?.id === team.id) &&
+          match.status === "pending"
+      );
+
+      if (hasExistingMatch) {
+        setError("Komandanızın artıq gözləyən matçı var");
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Create match with the updated structure
+      const success = createMatch(
+        team,
+        team.stadiumId,
+        team.stadium,
+        team.playDate,
+        team.playTime
+      );
+
+      if (success) {
+        console.log("Match created successfully");
+        navigate("/matches");
+      } else {
+        setError("Matç yaradılarkən xəta baş verdi. Yenidən cəhd edin.");
+      }
     } catch (err) {
       setError(err.message || "Xəta baş verdi");
       console.error("Error creating match:", err);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -153,7 +170,7 @@ const CreateMatch = () => {
     );
   }
 
-  if (compatibleMatches.length > 0) {
+  if (compatibleMatches && compatibleMatches.length > 0) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="bg-[#222] border-2 border-white/20 rounded-3xl shadow-lg p-6 max-w-md mx-auto">
@@ -202,6 +219,7 @@ const CreateMatch = () => {
             onChange={handleTeamChange}
             className="w-full p-3 rounded-full bg-[#353535] border-white/20 border-2 focus:outline-none focus:ring-2 focus:ring-green-400"
             required
+            disabled={isSubmitting}
           >
             {teams
               .filter((team) => team.creator?.id === currentUser?.id)
@@ -238,6 +256,10 @@ const CreateMatch = () => {
                         <span className="text-gray-400">Oyunçu sayı:</span>{" "}
                         {team.playerCount}
                       </p>
+                      <p>
+                        <span className="text-gray-400">Hazırlıq:</span>{" "}
+                        {team.isReady ? "Hazır" : "Hazır deyil"}
+                      </p>
                     </div>
                   ))}
               </>
@@ -247,10 +269,13 @@ const CreateMatch = () => {
 
         <button
           type="submit"
-          className="w-full bg-gradient-to-br from-green-400 to-green-600 text-gray-900 py-3 px-6 rounded-full font-medium shadow-lg transition-all duration-300 hover:bg-gradient-to-l hover:scale-105 hover:shadow-2xl flex items-center justify-center"
+          className={`w-full bg-gradient-to-br from-green-400 to-green-600 text-gray-900 py-3 px-6 rounded-full font-medium shadow-lg transition-all duration-300 hover:bg-gradient-to-l hover:scale-105 hover:shadow-2xl flex items-center justify-center ${
+            isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          disabled={isSubmitting}
         >
           <Swords className="mr-2" size={20} />
-          Matç Yarat
+          {isSubmitting ? "Yaradılır..." : "Matç Yarat"}
         </button>
       </form>
     </div>

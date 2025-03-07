@@ -35,78 +35,28 @@ export const MatchesProvider = ({ children }) => {
     initialLoadDone.current = true;
   }, []);
 
-  // Helper function to optimize match data
-  const optimizeMatchData = useCallback((match) => {
-    if (!match) return null;
-
-    return {
-      id: match.id,
-      date: match.date,
-      time: match.time,
-      stadiumId: match.stadiumId,
-      stadiumName: match.stadiumName || "",
-      status: match.status || "pending",
-      team1: match.team1
-        ? {
-            id: match.team1.id,
-            name: match.team1.name,
-            playerCount: match.team1.playerCount || 5,
-          }
-        : null,
-      team2: match.team2
-        ? {
-            id: match.team2.id,
-            name: match.team2.name,
-            playerCount: match.team2.playerCount || 5,
-          }
-        : null,
-    };
-  }, []);
-
   // Helper function to safely save matches to localStorage
-  const saveMatchesToStorage = useCallback(
-    (matchesToSave) => {
-      try {
-        // Optimize match data before saving
-        const optimizedMatches = matchesToSave
-          .map(optimizeMatchData)
-          .filter(Boolean);
+  const saveMatchesToStorage = useCallback((matchesToSave) => {
+    try {
+      localStorage.setItem("matches", JSON.stringify(matchesToSave));
+      console.log("Matches saved successfully:", matchesToSave);
+    } catch (error) {
+      console.error("Error saving matches to localStorage:", error);
 
-        localStorage.setItem("matches", JSON.stringify(optimizedMatches));
-      } catch (error) {
-        console.error("Error saving matches to localStorage:", error);
+      if (error.name === "QuotaExceededError") {
+        try {
+          // Keep only the most recent 5 matches
+          const recentMatches = [...matchesToSave]
+            .sort((a, b) => b.id - a.id)
+            .slice(0, 5);
 
-        if (error.name === "QuotaExceededError") {
-          try {
-            // Keep only the most recent 5 matches
-            const recentMatches = [...matchesToSave]
-              .sort((a, b) => b.id - a.id)
-              .slice(0, 5)
-              .map(optimizeMatchData)
-              .filter(Boolean);
-
-            localStorage.setItem("matches", JSON.stringify(recentMatches));
-          } catch (innerError) {
-            console.error(
-              "Failed to save even minimal match data:",
-              innerError
-            );
-          }
+          localStorage.setItem("matches", JSON.stringify(recentMatches));
+        } catch (innerError) {
+          console.error("Failed to save even minimal match data:", innerError);
         }
       }
-    },
-    [optimizeMatchData]
-  );
-
-  // Debounced save function
-  const debouncedSave = useCallback(
-    (matchesToSave) => {
-      setTimeout(() => {
-        saveMatchesToStorage(matchesToSave);
-      }, 300);
-    },
-    [saveMatchesToStorage]
-  );
+    }
+  }, []);
 
   // Check if teams are compatible for a match
   const areTeamsCompatible = useCallback((team1, team2) => {
@@ -123,15 +73,30 @@ export const MatchesProvider = ({ children }) => {
         // Clear any previous errors
         setError(null);
 
+        console.log("Creating match with:", {
+          team,
+          stadiumId,
+          stadiumName,
+          date,
+          time,
+        });
+
         // Validate inputs
         if (!team || !team.id || !stadiumId || !date || !time) {
           setError("Bütün məlumatları daxil edin");
+          console.error("Missing required fields:", {
+            team,
+            stadiumId,
+            date,
+            time,
+          });
           return false;
         }
 
         // Check if team is ready
         if (!team.isReady) {
           setError("Komandanız hazır deyil");
+          console.error("Team is not ready");
           return false;
         }
 
@@ -143,6 +108,7 @@ export const MatchesProvider = ({ children }) => {
           team.creator.id !== currentUser.id
         ) {
           setError("Yalnız komanda yaradıcısı matç yarada bilər");
+          console.error("User is not the team creator");
           return false;
         }
 
@@ -155,6 +121,7 @@ export const MatchesProvider = ({ children }) => {
 
         if (hasExistingMatch) {
           setError("Komandanızın artıq gözləyən matçı var");
+          console.error("Team already has a pending match");
           return false;
         }
 
@@ -174,9 +141,11 @@ export const MatchesProvider = ({ children }) => {
           team2: null,
         };
 
+        console.log("New match created:", newMatch);
+
         setMatches((prevMatches) => {
           const updatedMatches = [...prevMatches, newMatch];
-          debouncedSave(updatedMatches);
+          saveMatchesToStorage(updatedMatches);
           return updatedMatches;
         });
 
@@ -187,7 +156,7 @@ export const MatchesProvider = ({ children }) => {
         return false;
       }
     },
-    [matches, debouncedSave]
+    [matches, saveMatchesToStorage]
   );
 
   // Join an existing match
@@ -269,7 +238,7 @@ export const MatchesProvider = ({ children }) => {
             return m;
           });
 
-          debouncedSave(updatedMatches);
+          saveMatchesToStorage(updatedMatches);
           return updatedMatches;
         });
 
@@ -280,7 +249,7 @@ export const MatchesProvider = ({ children }) => {
         return false;
       }
     },
-    [matches, areTeamsCompatible, debouncedSave]
+    [matches, areTeamsCompatible, saveMatchesToStorage]
   );
 
   // Cancel a match
@@ -293,7 +262,7 @@ export const MatchesProvider = ({ children }) => {
           const updatedMatches = prevMatches.filter(
             (match) => match.id !== matchId
           );
-          debouncedSave(updatedMatches);
+          saveMatchesToStorage(updatedMatches);
           return updatedMatches;
         });
 
@@ -304,7 +273,7 @@ export const MatchesProvider = ({ children }) => {
         return false;
       }
     },
-    [debouncedSave]
+    [saveMatchesToStorage]
   );
 
   // Get matches for a specific team
@@ -339,6 +308,26 @@ export const MatchesProvider = ({ children }) => {
     [matches, areTeamsCompatible]
   );
 
+  // Get available matches that a team can join
+  const getCompatibleMatches = useCallback(
+    (team) => {
+      if (!team || !team.id) return [];
+
+      return matches.filter(
+        (match) =>
+          match.status === "pending" &&
+          !match.team2 &&
+          match.team1?.id !== team.id &&
+          // Check for compatibility - same stadium, date, time, and player count
+          match.stadiumId === team.stadiumId &&
+          match.date === team.playDate &&
+          match.time === team.playTime &&
+          match.team1.playerCount === team.playerCount
+      );
+    },
+    [matches]
+  );
+
   // Context value
   const contextValue = {
     matches,
@@ -348,6 +337,7 @@ export const MatchesProvider = ({ children }) => {
     cancelMatch,
     getTeamMatches,
     getAvailableMatches,
+    getCompatibleMatches,
     clearError: () => setError(null),
   };
 
@@ -357,3 +347,5 @@ export const MatchesProvider = ({ children }) => {
     </MatchesContext.Provider>
   );
 };
+
+export default MatchesProvider;

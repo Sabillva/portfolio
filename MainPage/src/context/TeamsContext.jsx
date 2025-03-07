@@ -13,224 +13,85 @@ const TeamsContext = createContext();
 
 export const useTeams = () => useContext(TeamsContext);
 
-// Use IndexedDB as a fallback storage when localStorage is full
-const useIndexedDB = () => {
-  const dbRef = useRef(null);
-
-  const initDB = useCallback(() => {
-    return new Promise((resolve, reject) => {
-      if (dbRef.current) {
-        resolve(dbRef.current);
-        return;
-      }
-
-      const request = indexedDB.open("FootballAppDB", 1);
-
-      request.onerror = (event) => {
-        console.error("IndexedDB error:", event.target.error);
-        reject(event.target.error);
-      };
-
-      request.onupgradeneeded = (event) => {
-        const db = event.target.result;
-        if (!db.objectStoreNames.contains("teams")) {
-          db.createObjectStore("teams", { keyPath: "id" });
-        }
-      };
-
-      request.onsuccess = (event) => {
-        dbRef.current = event.target.result;
-        resolve(dbRef.current);
-      };
-    });
-  }, []);
-
-  const saveTeams = useCallback(
-    async (teams) => {
-      try {
-        const db = await initDB();
-        const transaction = db.transaction(["teams"], "readwrite");
-        const store = transaction.objectStore("teams");
-
-        // Clear existing data
-        store.clear();
-
-        // Add each team individually
-        teams.forEach((team) => {
-          store.add(team);
-        });
-
-        return new Promise((resolve, reject) => {
-          transaction.oncomplete = () => resolve(true);
-          transaction.onerror = (event) => reject(event.target.error);
-        });
-      } catch (error) {
-        console.error("Error saving to IndexedDB:", error);
-        return false;
-      }
-    },
-    [initDB]
-  );
-
-  const getTeams = useCallback(async () => {
-    try {
-      const db = await initDB();
-      const transaction = db.transaction(["teams"], "readonly");
-      const store = transaction.objectStore("teams");
-      const request = store.getAll();
-
-      return new Promise((resolve, reject) => {
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = (event) => reject(event.target.error);
-      });
-    } catch (error) {
-      console.error("Error getting teams from IndexedDB:", error);
-      return [];
-    }
-  }, [initDB]);
-
-  return { saveTeams, getTeams };
-};
-
 export const TeamsProvider = ({ children }) => {
   const [teams, setTeams] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { saveTeams: saveToIndexedDB, getTeams: getFromIndexedDB } =
-    useIndexedDB();
   const initialLoadDone = useRef(false);
-
-  // Helper function to optimize team data before storage
-  const optimizeTeamData = useCallback((team) => {
-    if (!team) return null;
-
-    // Create a smaller version of the team object with only essential data
-    const optimizedTeam = {
-      id: team.id,
-      name: team.name,
-      city: team.city || "",
-      playDate: team.playDate || "",
-      playTime: team.playTime || "",
-      playerCount: team.playerCount || 5,
-      isReady: team.isReady || false,
-      stadiumId: team.stadiumId || null,
-    };
-
-    // Add minimal creator data
-    if (team.creator) {
-      optimizedTeam.creator = {
-        id: team.creator.id,
-        name: team.creator.name,
-      };
-    } else {
-      optimizedTeam.creator = { id: 0, name: "" };
-    }
-
-    // Add minimal members data
-    if (team.members && Array.isArray(team.members)) {
-      optimizedTeam.members = team.members.map((member) => ({
-        id: member.id,
-        name: member.name,
-        isCreator: member.isCreator || false,
-      }));
-    } else {
-      optimizedTeam.members = [];
-    }
-
-    return optimizedTeam;
-  }, []);
 
   // Load teams only once at initialization
   useEffect(() => {
     if (initialLoadDone.current) return;
 
-    const loadTeams = async () => {
-      setIsLoading(true);
-      try {
-        // First try localStorage
-        const storedTeamsString = localStorage.getItem("teams");
-        if (storedTeamsString) {
-          const storedTeams = JSON.parse(storedTeamsString);
-          setTeams(storedTeams);
-        } else {
-          // If not in localStorage, try IndexedDB
-          const teamsFromDB = await getFromIndexedDB();
-          if (teamsFromDB && teamsFromDB.length > 0) {
-            setTeams(teamsFromDB);
-          }
-        }
-      } catch (error) {
-        console.error("Error loading teams:", error);
-      } finally {
-        setIsLoading(false);
-        initialLoadDone.current = true;
+    try {
+      const storedTeamsString = localStorage.getItem("teams");
+      if (storedTeamsString) {
+        const storedTeams = JSON.parse(storedTeamsString);
+        setTeams(storedTeams);
       }
-    };
+    } catch (error) {
+      console.error("Error loading teams:", error);
+    } finally {
+      setIsLoading(false);
+      initialLoadDone.current = true;
+    }
+  }, []);
 
-    loadTeams();
-  }, [getFromIndexedDB]);
+  // Helper function to safely save teams to localStorage
+  const saveTeamsToStorage = useCallback((teamsToSave) => {
+    if (!teamsToSave || !Array.isArray(teamsToSave)) return;
 
-  // Helper function to safely save teams
-  const saveTeamsToStorage = useCallback(
-    async (teamsToSave) => {
-      if (!teamsToSave || !Array.isArray(teamsToSave)) return;
+    try {
+      localStorage.setItem("teams", JSON.stringify(teamsToSave));
+      console.log("Teams saved successfully:", teamsToSave);
+    } catch (error) {
+      console.error("Error saving teams to localStorage:", error);
 
-      // Optimize team data before saving
-      const optimizedTeams = teamsToSave.map(optimizeTeamData).filter(Boolean);
+      if (error.name === "QuotaExceededError") {
+        try {
+          // Last resort: keep only essential data for the most recent teams
+          const minimalTeams = teamsToSave.slice(0, 10).map((team) => ({
+            id: team.id,
+            name: team.name,
+            creator: team.creator
+              ? { id: team.creator.id, name: team.creator.name }
+              : null,
+            members: team.members
+              ? team.members.map((m) => ({
+                  id: m.id,
+                  name: m.name,
+                  isCreator: m.isCreator,
+                }))
+              : [],
+          }));
 
-      try {
-        // First try localStorage
-        localStorage.setItem("teams", JSON.stringify(optimizedTeams));
-      } catch (error) {
-        console.error("Error saving to localStorage:", error);
-
-        if (error.name === "QuotaExceededError") {
-          try {
-            // If localStorage fails, try IndexedDB
-            await saveToIndexedDB(optimizedTeams);
-          } catch (dbError) {
-            console.error("Error saving to IndexedDB:", dbError);
-
-            // Last resort: keep only essential data for the most recent teams
-            try {
-              const minimalTeams = optimizedTeams
-                .sort((a, b) => b.id - a.id)
-                .slice(0, 5)
-                .map((team) => ({
-                  id: team.id,
-                  name: team.name,
-                  members: team.members
-                    ? team.members.map((m) => ({ id: m.id, name: m.name }))
-                    : [],
-                }));
-
-              localStorage.clear(); // Clear everything to make space
-              localStorage.setItem("teams", JSON.stringify(minimalTeams));
-            } catch (finalError) {
-              console.error(
-                "Failed to save even minimal team data:",
-                finalError
-              );
-            }
-          }
+          localStorage.clear(); // Clear everything to make space
+          localStorage.setItem("teams", JSON.stringify(minimalTeams));
+        } catch (finalError) {
+          console.error("Failed to save even minimal team data:", finalError);
         }
       }
-    },
-    [optimizeTeamData, saveToIndexedDB]
-  );
+    }
+  }, []);
 
-  // Debounced save function to prevent too many storage operations
-  const debouncedSave = useCallback(
-    (teamsToSave) => {
-      setTimeout(() => {
-        saveTeamsToStorage(teamsToSave);
-      }, 300);
+  // Check if user is already a team creator
+  const isUserTeamCreator = useCallback(
+    (userId) => {
+      if (!userId) return false;
+      return teams.some((team) => team.creator && team.creator.id === userId);
     },
-    [saveTeamsToStorage]
+    [teams]
   );
 
   const addTeam = useCallback(
     (team) => {
-      if (!team || !team.id) return;
+      if (!team || !team.id) return false;
+
+      // Check if user is already a team creator
+      const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+      if (currentUser && isUserTeamCreator(currentUser.id)) {
+        console.error("User is already a team creator");
+        return false;
+      }
 
       setTeams((prevTeams) => {
         const existingTeam = prevTeams.find((t) => t.id === team.id);
@@ -244,11 +105,13 @@ export const TeamsProvider = ({ children }) => {
         };
 
         const updatedTeams = [...prevTeams, newTeam];
-        debouncedSave(updatedTeams);
+        saveTeamsToStorage(updatedTeams);
         return updatedTeams;
       });
+
+      return true;
     },
-    [debouncedSave]
+    [isUserTeamCreator, saveTeamsToStorage]
   );
 
   const updateTeam = useCallback(
@@ -259,11 +122,11 @@ export const TeamsProvider = ({ children }) => {
         const updatedTeams = prevTeams.map((team) =>
           team.id === updatedTeam.id ? updatedTeam : team
         );
-        debouncedSave(updatedTeams);
+        saveTeamsToStorage(updatedTeams);
         return updatedTeams;
       });
     },
-    [debouncedSave]
+    [saveTeamsToStorage]
   );
 
   const removeTeam = useCallback(
@@ -272,11 +135,11 @@ export const TeamsProvider = ({ children }) => {
 
       setTeams((prevTeams) => {
         const updatedTeams = prevTeams.filter((team) => team.id !== teamId);
-        debouncedSave(updatedTeams);
+        saveTeamsToStorage(updatedTeams);
         return updatedTeams;
       });
     },
-    [debouncedSave]
+    [saveTeamsToStorage]
   );
 
   const isUserInAnyTeam = useCallback(
@@ -315,19 +178,12 @@ export const TeamsProvider = ({ children }) => {
 
             if (!isMemberAlready) {
               success = true;
-              // Create minimal user object
-              const minimalUser = {
-                id: user.id,
-                name: user.name,
-                isCreator: false,
-              };
-
               return {
                 ...team,
-                members: [...team.members, minimalUser],
+                members: [...team.members, { ...user, isCreator: false }],
                 chatMembers: team.chatMembers
-                  ? [...team.chatMembers, minimalUser]
-                  : [minimalUser],
+                  ? [...team.chatMembers, user]
+                  : [user],
               };
             }
           }
@@ -335,7 +191,7 @@ export const TeamsProvider = ({ children }) => {
         });
 
         if (success) {
-          debouncedSave(updatedTeams);
+          saveTeamsToStorage(updatedTeams);
         }
 
         return updatedTeams;
@@ -343,7 +199,7 @@ export const TeamsProvider = ({ children }) => {
 
       return success;
     },
-    [isUserInAnyTeam, debouncedSave]
+    [isUserInAnyTeam, saveTeamsToStorage]
   );
 
   const leaveTeam = useCallback(
@@ -366,11 +222,11 @@ export const TeamsProvider = ({ children }) => {
           return team;
         });
 
-        debouncedSave(updatedTeams);
+        saveTeamsToStorage(updatedTeams);
         return updatedTeams;
       });
     },
-    [debouncedSave]
+    [saveTeamsToStorage]
   );
 
   const removeFromChat = useCallback(
@@ -390,11 +246,11 @@ export const TeamsProvider = ({ children }) => {
           return team;
         });
 
-        debouncedSave(updatedTeams);
+        saveTeamsToStorage(updatedTeams);
         return updatedTeams;
       });
     },
-    [debouncedSave]
+    [saveTeamsToStorage]
   );
 
   const updatePlayerCount = useCallback(
@@ -409,11 +265,11 @@ export const TeamsProvider = ({ children }) => {
           return team;
         });
 
-        debouncedSave(updatedTeams);
+        saveTeamsToStorage(updatedTeams);
         return updatedTeams;
       });
     },
-    [debouncedSave]
+    [saveTeamsToStorage]
   );
 
   const setTeamReady = useCallback(
@@ -428,45 +284,39 @@ export const TeamsProvider = ({ children }) => {
           return team;
         });
 
-        debouncedSave(updatedTeams);
+        saveTeamsToStorage(updatedTeams);
         return updatedTeams;
       });
     },
-    [debouncedSave]
+    [saveTeamsToStorage]
   );
 
   const updateUserInTeams = useCallback(
     (updatedUser) => {
       if (!updatedUser || !updatedUser.id) return;
 
-      // Create minimal user object to update
-      const minimalUser = {
-        id: updatedUser.id,
-        name: updatedUser.name,
-      };
-
       setTeams((prevTeams) => {
         const updatedTeams = prevTeams.map((team) => {
           // Update members
           const updatedMembers = team.members
             ? team.members.map((member) =>
-                member.id === minimalUser.id
-                  ? { ...member, name: minimalUser.name }
+                member.id === updatedUser.id
+                  ? { ...member, ...updatedUser }
                   : member
               )
             : [];
 
           // Update creator
           const updatedCreator =
-            team.creator && team.creator.id === minimalUser.id
-              ? { ...team.creator, name: minimalUser.name }
+            team.creator && team.creator.id === updatedUser.id
+              ? { ...team.creator, ...updatedUser }
               : team.creator;
 
           // Update chat members
           const updatedChatMembers = team.chatMembers
             ? team.chatMembers.map((member) =>
-                member.id === minimalUser.id
-                  ? { ...member, name: minimalUser.name }
+                member.id === updatedUser.id
+                  ? { ...member, name: updatedUser.name }
                   : member
               )
             : [];
@@ -479,11 +329,11 @@ export const TeamsProvider = ({ children }) => {
           };
         });
 
-        debouncedSave(updatedTeams);
+        saveTeamsToStorage(updatedTeams);
         return updatedTeams;
       });
     },
-    [debouncedSave]
+    [saveTeamsToStorage]
   );
 
   // Context value
@@ -500,6 +350,7 @@ export const TeamsProvider = ({ children }) => {
     setTeamReady,
     updateUserInTeams,
     isUserInAnyTeam,
+    isUserTeamCreator, // Add this to the context value
   };
 
   return (

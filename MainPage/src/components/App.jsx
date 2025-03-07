@@ -23,14 +23,15 @@ import CreateMatch from "../pages/CreateMatch";
 import Chat from "../pages/Chat";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
+import MatchDetail from "../pages/MatchDetail";
 
 function App() {
   return (
-    <TeamsProvider>
-      <MatchesProvider>
-        <ChatProvider>
-          <ReservationProvider>
-            <Router>
+    <Router>
+      <TeamsProvider>
+        <MatchesProvider>
+          <ChatProvider>
+            <ReservationProvider>
               <div className="flex">
                 <SideBar />
                 <div className="flex-1 lg:ml-64 p-4 transition-all duration-300">
@@ -60,16 +61,17 @@ function App() {
                     <Route path="/create-team" element={<CreateTeam />} />
                     <Route path="/team/:id" element={<TeamDetails />} />
                     <Route path="/matches" element={<Matches />} />
+                    <Route path="/matches/:id" element={<MatchDetail />} />
                     <Route path="/create-matches" element={<CreateMatch />} />
                     <Route path="/chat/:teamId" element={<Chat />} />
                   </Routes>
                 </div>
               </div>
-            </Router>
-          </ReservationProvider>
-        </ChatProvider>
-      </MatchesProvider>
-    </TeamsProvider>
+            </ReservationProvider>
+          </ChatProvider>
+        </MatchesProvider>
+      </TeamsProvider>
+    </Router>
   );
 }
 
