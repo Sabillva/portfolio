@@ -1,10 +1,11 @@
-from fastapi import APIRouter, HTTPException, Query, Depends
 from typing import List, Optional
 
+import stripe
+from fastapi import APIRouter, HTTPException, Query, Depends
 from sqlalchemy.orm import Session
 
-from backend.services.reservation_service import ReservationService
 from backend.database import get_db
+from backend.services.reservation_service import ReservationService
 
 router = APIRouter(prefix="/reservations", tags=["Reservations"])
 
@@ -34,15 +35,21 @@ def create_reservation(
         stadium_id: int,
         time_slot: str,
         date: str,
+        payment_intent_id: str,
         db: Session = Depends(get_db)
 ):
-    """
-    API endpoint to create a reservation for a user for a specific stadium and time slot.
-    """
-    response, status_code = ReservationService.create_reservation(user_id, stadium_id, time_slot, date, db)
+    try:
+        payment_intent = stripe.PaymentIntent.retrieve(payment_intent_id)
+        if payment_intent.status != "succeeded":
+            raise HTTPException(status_code=400, detail="Payment not completed.")
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    response, status_code = ReservationService.create_reservation(
+        user_id, stadium_id, time_slot, date, payment_intent_id, db
+    )
 
     if status_code != 201:
         raise HTTPException(status_code=status_code, detail=response["message"])
 
     return response
-

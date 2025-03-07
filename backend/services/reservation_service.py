@@ -1,17 +1,17 @@
 from datetime import datetime, timedelta
-
-from sqlalchemy.orm import Session
-
-from backend.database import SessionLocal
-from backend.models.models import Reservation, Stadium, AppUser
 from typing import List, Optional
 
-db = SessionLocal()
+from fastapi import Depends
+from sqlalchemy.orm import Session
+
+from backend.database import get_db
+from backend.models.models import Reservation, Stadium, AppUser
+
 
 class ReservationService:
-
     @staticmethod
-    def get_available_time_slots(city: str, stadium_id: Optional[int] = None, date_option: str = "today", time_slots: Optional[List[str]] = None):
+    def get_available_time_slots(city: str, stadium_id: Optional[int] = None, date_option: str = "today",
+                                 time_slots: Optional[List[str]] = None, db: Session = Depends(get_db)):
         """
         Returns available time slots for a given city, stadium, and date.
         If `time_slots` are provided, only checks those slots.
@@ -40,7 +40,7 @@ class ReservationService:
         ).all()
 
         # Define all possible time slots
-        all_time_slots = [f"{hour}:00-{hour+1}:00" for hour in range(7, 24)] + ["00:00-01:00"]
+        all_time_slots = [f"{hour}:00-{hour + 1}:00" for hour in range(7, 24)] + ["00:00-01:00"]
 
         # If user provided time slots, filter only those
         if time_slots:
@@ -59,7 +59,8 @@ class ReservationService:
         }
 
     @staticmethod
-    def create_reservation(user_id: int, stadium_id: int, time_slot: str, date: str, db: Session):
+    def create_reservation(user_id: int, stadium_id: int, time_slot: str, date: str, payment_intent_id: str,
+                           db: Session = Depends(get_db)):
         # Check if the stadium exists
         stadium = db.query(Stadium).filter(Stadium.id == stadium_id).first()
         if not stadium:
@@ -86,6 +87,7 @@ class ReservationService:
             stadium_id=stadium_id,
             time_slot=time_slot,
             date=date,
+            payment_intent_id=payment_intent_id,
             status="pending",  # Reservation status is pending initially
             payment_status="pending"  # Payment status is also pending
         )
@@ -96,4 +98,3 @@ class ReservationService:
         db.refresh(new_reservation)
 
         return {"message": "Reservation created successfully.", "reservation": new_reservation}, 201
-

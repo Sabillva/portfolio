@@ -1,6 +1,8 @@
-from pydantic import BaseModel, EmailStr
-from typing import Optional, List
 from datetime import datetime
+from typing import Optional, List
+
+from pydantic import BaseModel, EmailStr
+
 
 # --- User Schemas ---
 class UserBase(BaseModel):
@@ -90,3 +92,9 @@ class OwnerApplicationResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+# --- Payment Schema ---
+class PaymentIntentRequest(BaseModel):
+    stadium_id: int  # Add stadium_id to the request
+    currency: str = "usd"

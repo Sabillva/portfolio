@@ -16,6 +16,7 @@ class AppUser(Base_Model):
     stadiums = relationship("Stadium", back_populates="owner")
     reservations = relationship("Reservation", back_populates="user")
 
+
 class Applicant(Base_Model):
     __tablename__ = "applicants"
 
@@ -48,6 +49,7 @@ class Applicant(Base_Model):
     other_details = Column(Text, nullable=True)
     status = Column(Enum("pending", "approved", name="application_status"), default="pending")
 
+
 class Stadium(Base_Model):
     __tablename__ = "stadiums"
 
@@ -75,13 +77,14 @@ class Stadium(Base_Model):
     seating_area = Column(Boolean, nullable=False)
     equipment_rental = Column(String(255), nullable=True)
     opening_hours = Column(Text, nullable=False)
-    pricing = Column(Text, nullable=False)
+    price = Column(Float, nullable=False)
     cafe = Column(Boolean, nullable=False)
     pitch_photos = Column(JSON, nullable=True)
     other_details = Column(Text, nullable=True)
 
     owner = relationship("AppUser", back_populates="stadiums")
     reservations = relationship("Reservation", back_populates="stadium")
+
 
 class Reservation(Base_Model):
     __tablename__ = "reservations"
@@ -90,9 +93,10 @@ class Reservation(Base_Model):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     stadium_id = Column(Integer, ForeignKey("stadiums.id"), nullable=False)
     date = Column(Date, nullable=False)
-    time_slot = Column(String(20), nullable=False)  # Example: "13:00-14:00"
+    time_slot = Column(String(20), nullable=False)
     status = Column(Enum("pending", "accepted", "rejected", "canceled"), default="pending")
     payment_status = Column(Enum("pending", "successful", "rejected"), default="pending")
+    payment_intent_id = Column(String(50), nullable=True)  # Add this field
 
     # Relationships
     user = relationship("AppUser", back_populates="reservations")
