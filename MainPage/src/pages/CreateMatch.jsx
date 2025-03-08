@@ -9,7 +9,8 @@ import { Swords, AlertTriangle, Loader } from "lucide-react";
 const CreateMatch = () => {
   const navigate = useNavigate();
   const { teams } = useTeams();
-  const { createMatch, getCompatibleMatches, matches } = useMatches();
+  const { createMatch, getCompatibleMatches, matches, isTeamInAnyMatch } =
+    useMatches();
   const [selectedTeam, setSelectedTeam] = useState("");
   const [compatibleMatches, setCompatibleMatches] = useState([]);
   const [error, setError] = useState("");
@@ -51,6 +52,13 @@ const CreateMatch = () => {
     try {
       const team = teams.find((t) => t.id === Number(selectedTeam));
       if (team) {
+        // Check if team is already in a match
+        if (isTeamInAnyMatch && isTeamInAnyMatch(team.id)) {
+          setError("Komandanız artıq bir matçda iştirak edir");
+          setCompatibleMatches([]);
+          return;
+        }
+
         // Check if there are already compatible matches
         if (typeof getCompatibleMatches === "function") {
           const compatibleMatchesList = getCompatibleMatches(team);
@@ -62,7 +70,7 @@ const CreateMatch = () => {
       console.error("Error getting compatible matches:", err);
       setError(err.message || "Xəta baş verdi");
     }
-  }, [selectedTeam, teams, getCompatibleMatches, loading]);
+  }, [selectedTeam, teams, getCompatibleMatches, loading, isTeamInAnyMatch]);
 
   const handleTeamChange = (e) => {
     try {
@@ -94,24 +102,18 @@ const CreateMatch = () => {
         return;
       }
 
+      // Check if team is already in a match
+      if (isTeamInAnyMatch && isTeamInAnyMatch(team.id)) {
+        setError("Komandanız artıq bir matçda iştirak edir");
+        setIsSubmitting(false);
+        return;
+      }
+
       // Check if there are compatible matches
       if (compatibleMatches && compatibleMatches.length > 0) {
         setError(
           "Sizə uyğun matçlar var. Zəhmət olmasa, mövcud matçlara qoşulun."
         );
-        setIsSubmitting(false);
-        return;
-      }
-
-      // Check if team already has a pending match
-      const hasExistingMatch = matches.some(
-        (match) =>
-          (match.team1?.id === team.id || match.team2?.id === team.id) &&
-          match.status === "pending"
-      );
-
-      if (hasExistingMatch) {
-        setError("Komandanızın artıq gözləyən matçı var");
         setIsSubmitting(false);
         return;
       }
@@ -147,7 +149,6 @@ const CreateMatch = () => {
       </div>
     );
   }
-
   if (error && error === "Siz heç bir komandanın yaradıcısı deyilsiniz") {
     return (
       <div className="container mx-auto px-4 py-8 text-center">

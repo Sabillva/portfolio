@@ -66,6 +66,21 @@ export const MatchesProvider = ({ children }) => {
     return team1.playerCount === team2.playerCount;
   }, []);
 
+  // Check if a team is already in a match
+  const isTeamInAnyMatch = useCallback(
+    (teamId) => {
+      if (!teamId) return false;
+
+      return matches.some(
+        (match) =>
+          ((match.team1?.id === teamId || match.team2?.id === teamId) &&
+            match.status === "pending") ||
+          match.status === "confirmed"
+      );
+    },
+    [matches]
+  );
+
   // Create a new match
   const createMatch = useCallback(
     (team, stadiumId, stadiumName, date, time) => {
@@ -119,16 +134,12 @@ export const MatchesProvider = ({ children }) => {
           return false;
         }
 
-        // Check if team already has a pending match
-        const hasExistingMatch = matches.some(
-          (match) =>
-            (match.team1?.id === team.id || match.team2?.id === team.id) &&
-            match.status === "pending"
-        );
+        // Check if team already has a match (pending or confirmed)
+        const hasExistingMatch = isTeamInAnyMatch(team.id);
 
         if (hasExistingMatch) {
-          setError("Komandanızın artıq gözləyən matçı var");
-          console.error("Team already has a pending match");
+          setError("Komandanız artıq bir matçda iştirak edir");
+          console.error("Team is already in a match");
           return false;
         }
 
@@ -163,10 +174,10 @@ export const MatchesProvider = ({ children }) => {
         return false;
       }
     },
-    [matches, saveMatchesToStorage]
+    [matches, saveMatchesToStorage, isTeamInAnyMatch]
   );
 
-  // Also update the joinMatch function
+  // Join a match
   const joinMatch = useCallback(
     (matchId, team) => {
       try {
@@ -209,16 +220,11 @@ export const MatchesProvider = ({ children }) => {
           return false;
         }
 
-        // Check if team already has a pending match
-        const hasExistingMatch = matches.some(
-          (m) =>
-            (m.team1?.id === team.id || m.team2?.id === team.id) &&
-            m.status === "pending" &&
-            m.id !== matchId
-        );
+        // Check if team is already in any match
+        const isInAnotherMatch = isTeamInAnyMatch(team.id);
 
-        if (hasExistingMatch) {
-          setError("Komandanızın artıq gözləyən matçı var");
+        if (isInAnotherMatch) {
+          setError("Komandanız artıq bir matçda iştirak edir");
           return false;
         }
 
@@ -262,7 +268,67 @@ export const MatchesProvider = ({ children }) => {
         return false;
       }
     },
-    [matches, areTeamsCompatible, saveMatchesToStorage]
+    [matches, areTeamsCompatible, saveMatchesToStorage, isTeamInAnyMatch]
+  );
+
+  // Leave a match (for team2)
+  const leaveMatch = useCallback(
+    (matchId) => {
+      try {
+        setError(null);
+
+        // Find the match
+        const match = matches.find((m) => m.id === matchId);
+        if (!match) {
+          setError("Matç tapılmadı");
+          return false;
+        }
+
+        // Check if there is a team2
+        if (!match.team2) {
+          setError("Bu matçda ikinci komanda yoxdur");
+          return false;
+        }
+
+        // Check if user is the creator of team2
+        const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+        const team = teams.find((t) => t.id === match.team2.id);
+
+        if (
+          !currentUser ||
+          !team ||
+          !team.creator ||
+          team.creator.id !== currentUser.id
+        ) {
+          setError("Yalnız qoşulmuş komandanın yaradıcısı matçdan çıxa bilər");
+          return false;
+        }
+
+        // Update the match
+        setMatches((prevMatches) => {
+          const updatedMatches = prevMatches.map((m) => {
+            if (m.id === matchId) {
+              return {
+                ...m,
+                team2: null,
+                status: "pending",
+              };
+            }
+            return m;
+          });
+
+          saveMatchesToStorage(updatedMatches);
+          return updatedMatches;
+        });
+
+        return true;
+      } catch (error) {
+        console.error("Error leaving match:", error);
+        setError("Matçdan çıxarkən xəta baş verdi");
+        return false;
+      }
+    },
+    [matches, teams, saveMatchesToStorage]
   );
 
   // Cancel a match
@@ -326,6 +392,11 @@ export const MatchesProvider = ({ children }) => {
     (team) => {
       if (!team || !team.id) return [];
 
+      // Check if team is already in a match
+      if (isTeamInAnyMatch(team.id)) {
+        return [];
+      }
+
       return matches.filter(
         (match) =>
           match.status === "pending" &&
@@ -338,7 +409,7 @@ export const MatchesProvider = ({ children }) => {
           match.team1.playerCount === team.playerCount
       );
     },
-    [matches]
+    [matches, isTeamInAnyMatch]
   );
 
   // Context value
@@ -347,10 +418,12 @@ export const MatchesProvider = ({ children }) => {
     error,
     createMatch,
     joinMatch,
+    leaveMatch,
     cancelMatch,
     getTeamMatches,
     getAvailableMatches,
     getCompatibleMatches,
+    isTeamInAnyMatch,
     clearError: () => setError(null),
   };
 

@@ -12,12 +12,13 @@ import {
   Users,
   Trash,
   UserPlus,
+  LogOut,
 } from "lucide-react";
 
 const MatchDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { matches, cancelMatch, joinMatch } = useMatches();
+  const { matches, cancelMatch, joinMatch, leaveMatch } = useMatches();
   const { teams } = useTeams();
   const [match, setMatch] = useState(null);
   const [userTeam, setUserTeam] = useState(null);
@@ -25,6 +26,7 @@ const MatchDetail = () => {
   const [error, setError] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
+  const [isLeaving, setIsLeaving] = useState(false);
 
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
@@ -35,7 +37,7 @@ const MatchDetail = () => {
     }
 
     if (matches && id) {
-      const foundMatch = matches.find((m) => m.id === parseInt(id));
+      const foundMatch = matches.find((m) => m.id === Number.parseInt(id));
       if (foundMatch) {
         setMatch(foundMatch);
       } else {
@@ -96,7 +98,7 @@ const MatchDetail = () => {
       const success = await joinMatch(match.id, userTeam);
       if (success) {
         // Refresh the match data
-        const updatedMatch = matches.find((m) => m.id === parseInt(id));
+        const updatedMatch = matches.find((m) => m.id === Number.parseInt(id));
         setMatch(updatedMatch);
       } else {
         setError("Matça qoşularkən xəta baş verdi");
@@ -106,6 +108,34 @@ const MatchDetail = () => {
       setError(err.message || "Matça qoşularkən xəta baş verdi");
     } finally {
       setIsJoining(false);
+    }
+  };
+
+  const handleLeaveMatch = async () => {
+    if (!match || !userTeam) return;
+
+    setIsLeaving(true);
+    try {
+      // Check if current user is the creator of team2
+      if (match.team2 && match.team2.id === userTeam.id) {
+        const success = await leaveMatch(match.id);
+        if (success) {
+          // Refresh the match data
+          const updatedMatch = matches.find(
+            (m) => m.id === Number.parseInt(id)
+          );
+          setMatch(updatedMatch);
+        } else {
+          setError("Matçdan çıxarkən xəta baş verdi");
+        }
+      } else {
+        setError("Yalnız qoşulmuş komandanın yaradıcısı matçdan çıxa bilər");
+      }
+    } catch (err) {
+      console.error("Error leaving match:", err);
+      setError(err.message || "Matçdan çıxarkən xəta baş verdi");
+    } finally {
+      setIsLeaving(false);
     }
   };
 
@@ -123,6 +153,16 @@ const MatchDetail = () => {
 
     // User's team must not be the team that created the match
     if (match.team1.id === userTeam.id) return false;
+
+    // Check if user's team is already in another match
+    const isInAnotherMatch = matches.some(
+      (m) =>
+        m.id !== match.id &&
+        ((m.team1 && m.team1.id === userTeam.id) ||
+          (m.team2 && m.team2.id === userTeam.id))
+    );
+
+    if (isInAnotherMatch) return false;
 
     // Teams must be compatible (same player count, stadium, date, time)
     return (
@@ -142,6 +182,18 @@ const MatchDetail = () => {
 
     // User must be the creator of the team that created the match
     return team && team.creator && team.creator.id === currentUser.id;
+  };
+
+  // Check if user can leave this match
+  const canLeaveMatch = () => {
+    if (!match || !userTeam || !match.team2 || !currentUser) return false;
+
+    // User must be the creator of team2
+    return (
+      match.team2.id === userTeam.id &&
+      userTeam.creator &&
+      userTeam.creator.id === currentUser.id
+    );
   };
 
   if (loading) {
@@ -275,6 +327,19 @@ const MatchDetail = () => {
             >
               <UserPlus className="mr-2" size={18} />
               {isJoining ? "Qoşulur..." : "Matça Qoşul"}
+            </button>
+          )}
+
+          {canLeaveMatch() && (
+            <button
+              onClick={handleLeaveMatch}
+              disabled={isLeaving}
+              className={`bg-orange-500 hover:bg-orange-600 text-white py-2 px-6 rounded-full flex items-center ${
+                isLeaving ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            >
+              <LogOut className="mr-2" size={18} />
+              {isLeaving ? "Çıxılır..." : "Matchdan Çıx"}
             </button>
           )}
 
