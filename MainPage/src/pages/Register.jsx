@@ -15,8 +15,34 @@ const Register = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
+  const debugLocalStorage = () => {
+    try {
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+      console.log("Current users in localStorage:", users);
+
+      // Check if the current email exists
+      const userExists = users.some((u) => u.email === email);
+      console.log(`User with email ${email} exists: ${userExists}`);
+
+      // Check localStorage size
+      let totalSize = 0;
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        const value = localStorage.getItem(key);
+        totalSize += (key.length + value.length) * 2; // UTF-16 uses 2 bytes per character
+      }
+      console.log(
+        `Total localStorage usage: ${(totalSize / 1024).toFixed(2)} KB`
+      );
+    } catch (err) {
+      console.error("Error debugging localStorage:", err);
+    }
+  };
+
+  debugLocalStorage();
+
   const sendVerificationEmail = useCallback((email, code) => {
-    // In a real application, you would send an email here
+    // In a real application, I would send an email here
     console.log(`Verification code ${code} sent to ${email}`);
     // For demo purposes, we'll show an alert
     alert(
@@ -96,17 +122,9 @@ const Register = () => {
             id: Date.now(),
             name,
             email,
-            password,
+            password, // Make sure password is included
             phone,
             profileImage: null,
-          };
-
-          // Try to save with minimal data from the start
-          const minimalUser = {
-            id: newUser.id,
-            name: newUser.name,
-            email: newUser.email,
-            phone: newUser.phone,
           };
 
           try {
@@ -114,11 +132,21 @@ const Register = () => {
               JSON.parse(localStorage.getItem("users")) || [];
 
             // Keep only the most recent 10 users
-            const recentUsers = [...existingUsers, minimalUser]
+            // IMPORTANT: Include the full user object with password
+            const recentUsers = [...existingUsers, newUser]
               .sort((a, b) => b.id - a.id)
               .slice(0, 10);
 
             localStorage.setItem("users", JSON.stringify(recentUsers));
+
+            // For currentUser, we can use minimal data without password
+            const minimalUser = {
+              id: newUser.id,
+              name: newUser.name,
+              email: newUser.email,
+              phone: newUser.phone,
+            };
+
             localStorage.setItem("currentUser", JSON.stringify(minimalUser));
             localStorage.setItem("isLoggedIn", "true");
 
@@ -129,6 +157,18 @@ const Register = () => {
             // If quota exceeded, try with even more minimal data
             if (storageError.name === "QuotaExceededError") {
               localStorage.clear(); // Clear everything
+
+              // Save at least the user with password for login
+              const minimalUsers = [
+                {
+                  id: newUser.id,
+                  name: newUser.name,
+                  email: newUser.email,
+                  password: newUser.password, // Include password
+                },
+              ];
+
+              localStorage.setItem("users", JSON.stringify(minimalUsers));
 
               const veryMinimalUser = {
                 id: newUser.id,

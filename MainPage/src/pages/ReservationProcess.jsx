@@ -5,7 +5,7 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { stadiumsData } from "../data/stadiumsData";
-import { MapPin, DollarSign, Clock } from "lucide-react";
+import { MapPin, DollarSign, Clock, AlertCircle } from "lucide-react";
 import { useReservation } from "../context/ReservationContext";
 
 const ReservationProcess = () => {
@@ -16,29 +16,65 @@ const ReservationProcess = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
   const [price, setPrice] = useState(null);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
   const { isStadiumAvailable, addReservation } = useReservation();
 
+  // Get current user from localStorage with null check
+  const currentUser = (() => {
+    try {
+      const userStr = localStorage.getItem("currentUser");
+      if (!userStr) return null;
+      return JSON.parse(userStr);
+    } catch (e) {
+      console.error("Error parsing currentUser from localStorage:", e);
+      return null;
+    }
+  })();
+
+  // Initialize component data
   useEffect(() => {
+    // Check if user is logged in
+    if (!currentUser) {
+      setError("Giriş etməlisiniz");
+      navigate("/login");
+      return;
+    }
+
+    // Find stadium by ID
     const foundStadium = stadiumsData.find((s) => s.id === Number(id));
     if (foundStadium) {
       setStadium(foundStadium);
+
+      // Initialize from location state if available
       if (location.state) {
-        setSelectedDate(new Date(location.state.playDate));
-        setSelectedTime(location.state.playTime);
-        setPrice(foundStadium.price);
+        if (location.state.playDate) {
+          setSelectedDate(new Date(location.state.playDate));
+        }
+        if (location.state.playTime) {
+          setSelectedTime(location.state.playTime);
+        }
+        if (foundStadium.price) {
+          setPrice(foundStadium.price);
+        }
       }
     } else {
+      setError("Stadion tapılmadı");
       navigate("/stadiums");
     }
-  }, [id, navigate, location]);
+
+    setLoading(false);
+  }, [id]); // Only depend on id, not navigate, location, or currentUser
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
     setSelectedTime(null);
     setPrice(null);
+    setError("");
   };
 
   const handleTimeChange = (time) => {
+    setError("");
     if (
       isStadiumAvailable(
         stadium.id,
@@ -51,53 +87,93 @@ const ReservationProcess = () => {
         setPrice(stadium.price);
       }
     } else {
-      alert(
+      setError(
         "Bu saat artıq rezervasiya olunub. Zəhmət olmasa başqa saat seçin."
       );
     }
   };
 
   const handleReservation = () => {
-    if (selectedDate && selectedTime && price) {
+    // Clear previous errors
+    setError("");
+
+    // Check if user is logged in
+    if (!currentUser) {
+      setError("Giriş etməlisiniz");
+      navigate("/login");
+      return;
+    }
+
+    // Check if all required fields are selected
+    if (!selectedDate || !selectedTime || !price) {
+      setError("Zəhmət olmasa tarix və saat seçin");
+      return;
+    }
+
+    try {
       const reservation = {
         id: Date.now(),
         stadiumId: stadium.id,
         date: selectedDate.toISOString().split("T")[0],
         time: selectedTime,
         price: price,
-        userId: JSON.parse(localStorage.getItem("currentUser")).id,
+        userId: currentUser.id,
         paid: false,
         expiresAt: new Date(
           selectedDate.getTime() + 24 * 60 * 60 * 1000
         ).toISOString(), // 24 hours from now
       };
+
       addReservation(reservation);
+
       navigate("/payment-process", {
         state: {
           reservation,
           teamData: location.state, // Team yaratma səhifəsindən gələn məlumatlar
         },
       });
+    } catch (err) {
+      console.error("Error creating reservation:", err);
+      setError("Rezervasiya yaradılarkən xəta baş verdi. Yenidən cəhd edin.");
     }
   };
 
-  const handleBackToCreateTeam = () => {
-    navigate("/create-team", {
-      state: {
-        ...location.state,
-        isReserved: true,
-        playDate: selectedDate.toISOString().split("T")[0],
-        playTime: selectedTime,
-        stadiumId: stadium.id,
-      },
-    });
-  };
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8 text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
+        <p className="mt-4">Yüklənir...</p>
+      </div>
+    );
+  }
 
-  if (!stadium) return <div>Yüklənir...</div>;
+  if (!stadium) {
+    return (
+      <div className="container mx-auto px-4 py-8 text-center">
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          Stadion tapılmadı
+        </div>
+        <button
+          onClick={() => navigate("/stadiums")}
+          className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300"
+        >
+          Stadionlara Qayıt
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6">Rezervasiya Prosesi</h1>
+
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 flex items-center">
+          <AlertCircle className="mr-2" size={18} />
+          {error}
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div>
           <img
@@ -158,22 +234,23 @@ const ReservationProcess = () => {
                 <DollarSign className="mr-2" size={18} />
                 <span className="text-xl font-bold">{price} AZN</span>
               </div>
-              <button
-                onClick={handleReservation}
-                className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300"
-              >
-                Rezervasiya Et
-              </button>
+              <div className="flex flex-col space-y-2">
+                <button
+                  onClick={handleReservation}
+                  className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300"
+                >
+                  Rezervasiya Et
+                </button>
+                <button
+                  onClick={() => navigate("/stadiums")}
+                  className="w-full bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600 transition duration-300"
+                >
+                  Ləğv Et
+                </button>
+              </div>
             </div>
           )}
-          {location.state && location.state.fromCreateTeam && (
-            <button
-              onClick={handleBackToCreateTeam}
-              className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300"
-            >
-              Team yarat səhifəsinə geri dön
-            </button>
-          )}
+          {/* Removed the "Team yarat səhifəsinə geri dön" button as requested */}
         </div>
       </div>
     </div>

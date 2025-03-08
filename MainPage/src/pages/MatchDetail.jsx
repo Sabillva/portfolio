@@ -86,6 +86,13 @@ const MatchDetail = () => {
 
     setIsJoining(true);
     try {
+      // Check if user's team has joinMatch flag
+      if (!userTeam.joinMatch) {
+        setError("Komandanız matça qoşulmaq üçün uyğun deyil");
+        setIsJoining(false);
+        return;
+      }
+
       const success = await joinMatch(match.id, userTeam);
       if (success) {
         // Refresh the match data
@@ -111,11 +118,19 @@ const MatchDetail = () => {
     if (!userTeam.creator || userTeam.creator.id !== currentUser.id)
       return false;
 
+    // User's team must have joinMatch flag
+    if (!userTeam.joinMatch) return false;
+
     // User's team must not be the team that created the match
     if (match.team1.id === userTeam.id) return false;
 
-    // Teams must be compatible (same player count)
-    return match.team1.playerCount === userTeam.playerCount;
+    // Teams must be compatible (same player count, stadium, date, time)
+    return (
+      match.team1.playerCount === userTeam.playerCount &&
+      match.stadiumId === userTeam.stadiumId &&
+      match.date === userTeam.playDate &&
+      match.time === userTeam.playTime
+    );
   };
 
   // Check if user can delete this match

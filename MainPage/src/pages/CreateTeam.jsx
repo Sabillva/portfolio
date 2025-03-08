@@ -7,7 +7,7 @@ import { stadiumsData } from "../data/stadiumsData";
 
 const CreateTeam = () => {
   const navigate = useNavigate();
-  const { addTeam, teams, isUserTeamCreator } = useTeams();
+  const { addTeam, teams, isUserTeamCreator, isUserInAnyTeam } = useTeams();
   const [teamName, setTeamName] = useState("");
   const [city, setCity] = useState("");
   const [playDate, setPlayDate] = useState("");
@@ -21,9 +21,37 @@ const CreateTeam = () => {
   const [isReserved, setIsReserved] = useState(false);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isAlreadyInTeam, setIsAlreadyInTeam] = useState(false);
   const location = useLocation();
 
-  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+  // Get current user from localStorage with null check
+  const currentUser = (() => {
+    try {
+      const userStr = localStorage.getItem("currentUser");
+      if (!userStr) return null;
+      return JSON.parse(userStr);
+    } catch (e) {
+      console.error("Error parsing currentUser from localStorage:", e);
+      return null;
+    }
+  })();
+
+  // Redirect to login if not logged in
+  useEffect(() => {
+    if (!currentUser) {
+      navigate("/login");
+    }
+  }, [currentUser, navigate]);
+
+  // Check if user is already in a team
+  useEffect(() => {
+    if (currentUser && isUserInAnyTeam && isUserInAnyTeam(currentUser.id)) {
+      setIsAlreadyInTeam(true);
+      setError(
+        "Siz artıq bir komandanın üzvüsünüz. Yeni komanda yarada bilməzsiniz."
+      );
+    }
+  }, [currentUser, isUserInAnyTeam]);
 
   // Check if user is already a team creator
   useEffect(() => {
@@ -34,6 +62,7 @@ const CreateTeam = () => {
     }
   }, [currentUser, isUserTeamCreator]);
 
+  // Load data from location state if available
   useEffect(() => {
     if (location.state) {
       const {
@@ -55,6 +84,7 @@ const CreateTeam = () => {
     }
   }, [location]);
 
+  // Filter stadiums based on selected city
   useEffect(() => {
     if (city) {
       const filteredStadiums = stadiumsData.filter(
@@ -67,6 +97,7 @@ const CreateTeam = () => {
     setStadiumId("");
   }, [city]);
 
+  // Get available times for selected stadium and date
   useEffect(() => {
     if (stadiumId && playDate) {
       const stadium = stadiumsData.find((s) => s.id === Number(stadiumId));
@@ -90,6 +121,68 @@ const CreateTeam = () => {
     }
   };
 
+  const validateForm = () => {
+    if (!currentUser) {
+      setError("Giriş etməlisiniz");
+      navigate("/login");
+      return false;
+    }
+
+    if (isAlreadyInTeam) {
+      setError(
+        "Siz artıq bir komandanın üzvüsünüz. Yeni komanda yarada bilməzsiniz."
+      );
+      return false;
+    }
+
+    if (isUserTeamCreator && isUserTeamCreator(currentUser.id)) {
+      setError(
+        "Siz artıq bir komandanın yaradıcısısınız. Yeni komanda yarada bilməzsiniz."
+      );
+      return false;
+    }
+
+    if (!teamName.trim()) {
+      setError("Komanda adını daxil edin");
+      return false;
+    }
+    if (!city) {
+      setError("Şəhər seçin");
+      return false;
+    }
+    if (!stadiumId) {
+      setError("Stadion seçin");
+      return false;
+    }
+    if (!playDate) {
+      setError("Oyun tarixini seçin");
+      return false;
+    }
+    if (!playTime) {
+      setError("Oyun saatını seçin");
+      return false;
+    }
+    return true;
+  };
+
+  const handleReservation = () => {
+    // Validate form before proceeding
+    if (!validateForm()) return;
+
+    navigate(`/reservation/${stadiumId}`, {
+      state: {
+        teamName,
+        city,
+        playDate,
+        playTime,
+        playerCount,
+        stadiumId,
+        joinMatch,
+        fromCreateTeam: true,
+      },
+    });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
@@ -98,14 +191,27 @@ const CreateTeam = () => {
     setIsSubmitting(true);
 
     try {
+      // Check if user is logged in
+      if (!currentUser) {
+        setError("Giriş etməlisiniz");
+        setIsSubmitting(false);
+        navigate("/login");
+        return;
+      }
+
       // Check if user is already a team creator
-      if (
-        currentUser &&
-        isUserTeamCreator &&
-        isUserTeamCreator(currentUser.id)
-      ) {
+      if (isUserTeamCreator && isUserTeamCreator(currentUser.id)) {
         setError(
           "Siz artıq bir komandanın yaradıcısısınız. Yeni komanda yarada bilməzsiniz."
+        );
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Check if user is already in a team
+      if (isUserInAnyTeam && isUserInAnyTeam(currentUser.id)) {
+        setError(
+          "Siz artıq bir komandanın üzvüsünüz. Yeni komanda yarada bilməzsiniz."
         );
         setIsSubmitting(false);
         return;
@@ -172,20 +278,27 @@ const CreateTeam = () => {
     }
   };
 
-  const handleReservation = () => {
-    navigate(`/reservation/${stadiumId}`, {
-      state: {
-        teamName,
-        city,
-        playDate,
-        playTime,
-        playerCount,
-        stadiumId,
-        joinMatch,
-        fromCreateTeam: true,
-      },
-    });
-  };
+  // Check if form should be disabled
+  const isFormDisabled =
+    !currentUser ||
+    isAlreadyInTeam ||
+    (isUserTeamCreator && currentUser && isUserTeamCreator(currentUser.id));
+
+  if (!currentUser) {
+    return (
+      <div className="container mx-auto px-4 py-8 text-center">
+        <div className="max-w-md mx-auto mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+          Giriş etməlisiniz
+        </div>
+        <button
+          onClick={() => navigate("/login")}
+          className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300"
+        >
+          Giriş Səhifəsinə Get
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -212,7 +325,7 @@ const CreateTeam = () => {
             onChange={(e) => setTeamName(e.target.value)}
             className="w-full p-2 border rounded"
             required
-            disabled={isUserTeamCreator && isUserTeamCreator(currentUser?.id)}
+            disabled={isFormDisabled}
           />
         </div>
         <div className="mb-4">
@@ -225,7 +338,7 @@ const CreateTeam = () => {
             onChange={(e) => setCity(e.target.value)}
             className="w-full p-2 border rounded"
             required
-            disabled={isUserTeamCreator && isUserTeamCreator(currentUser?.id)}
+            disabled={isFormDisabled}
           >
             <option value="">Şəhər seçin</option>
             <option value="Bakı">Bakı</option>
@@ -243,9 +356,7 @@ const CreateTeam = () => {
             onChange={(e) => setStadiumId(e.target.value)}
             className="w-full p-2 border rounded"
             required
-            disabled={
-              !city || (isUserTeamCreator && isUserTeamCreator(currentUser?.id))
-            }
+            disabled={!city || isFormDisabled}
           >
             <option value="">Stadion seçin</option>
             {availableStadiums.map((stadium) => (
@@ -267,7 +378,7 @@ const CreateTeam = () => {
             className="w-full p-2 border rounded"
             required
             min={new Date().toISOString().split("T")[0]}
-            disabled={isUserTeamCreator && isUserTeamCreator(currentUser?.id)}
+            disabled={isFormDisabled}
           />
         </div>
         <div className="mb-4">
@@ -280,11 +391,7 @@ const CreateTeam = () => {
             onChange={(e) => setPlayTime(e.target.value)}
             className="w-full p-2 border rounded"
             required
-            disabled={
-              !stadiumId ||
-              !playDate ||
-              (isUserTeamCreator && isUserTeamCreator(currentUser?.id))
-            }
+            disabled={!stadiumId || !playDate || isFormDisabled}
           >
             <option value="">Saat seçin</option>
             {availableTimes.map((time) => (
@@ -310,7 +417,7 @@ const CreateTeam = () => {
             max="11"
             className="w-full p-2 border rounded"
             required
-            disabled={isUserTeamCreator && isUserTeamCreator(currentUser?.id)}
+            disabled={isFormDisabled}
           />
         </div>
         <div className="mb-6">
@@ -323,7 +430,7 @@ const CreateTeam = () => {
             accept="image/*"
             onChange={handleLogoChange}
             className="w-full p-2 border rounded"
-            disabled={isUserTeamCreator && isUserTeamCreator(currentUser?.id)}
+            disabled={isFormDisabled}
           />
           {logo && (
             <img
@@ -341,7 +448,7 @@ const CreateTeam = () => {
             type="checkbox"
             checked={joinMatch}
             onChange={(e) => setJoinMatch(e.target.checked)}
-            disabled={isUserTeamCreator && isUserTeamCreator(currentUser?.id)}
+            disabled={isFormDisabled}
           />
         </div>
         {isReserved ? (
@@ -351,11 +458,9 @@ const CreateTeam = () => {
             type="button"
             onClick={handleReservation}
             className={`w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 mb-4 ${
-              isUserTeamCreator && isUserTeamCreator(currentUser?.id)
-                ? "opacity-50 cursor-not-allowed"
-                : ""
+              isFormDisabled ? "opacity-50 cursor-not-allowed" : ""
             }`}
-            disabled={isUserTeamCreator && isUserTeamCreator(currentUser?.id)}
+            disabled={isFormDisabled}
           >
             Teami yaratmazdan öncə reservasiya et
           </button>
@@ -363,15 +468,9 @@ const CreateTeam = () => {
         <button
           type="submit"
           className={`w-full bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition duration-300 ${
-            !isReserved ||
-            (isUserTeamCreator && isUserTeamCreator(currentUser?.id))
-              ? "opacity-50 cursor-not-allowed"
-              : ""
+            !isReserved || isFormDisabled ? "opacity-50 cursor-not-allowed" : ""
           }`}
-          disabled={
-            !isReserved ||
-            (isUserTeamCreator && isUserTeamCreator(currentUser?.id))
-          }
+          disabled={!isReserved || isFormDisabled}
         >
           Komanda Yarat
         </button>

@@ -100,6 +100,13 @@ export const MatchesProvider = ({ children }) => {
           return false;
         }
 
+        // Check if team has joinMatch flag set to true
+        if (!team.joinMatch) {
+          setError("Bu komanda matç yaratmaq üçün uyğun deyil");
+          console.error("Team does not have joinMatch flag");
+          return false;
+        }
+
         // Check if user is the creator of the team
         const currentUser = JSON.parse(localStorage.getItem("currentUser"));
         if (
@@ -159,7 +166,7 @@ export const MatchesProvider = ({ children }) => {
     [matches, saveMatchesToStorage]
   );
 
-  // Join an existing match
+  // Also update the joinMatch function
   const joinMatch = useCallback(
     (matchId, team) => {
       try {
@@ -182,6 +189,12 @@ export const MatchesProvider = ({ children }) => {
         // Check if team is ready
         if (!team.isReady) {
           setError("Komandanız hazır deyil");
+          return false;
+        }
+
+        // Check if team has joinMatch flag set to true
+        if (!team.joinMatch) {
+          setError("Bu komanda matça qoşulmaq üçün uyğun deyil");
           return false;
         }
 

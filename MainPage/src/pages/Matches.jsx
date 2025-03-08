@@ -12,7 +12,7 @@ import {
   MapPin,
   Users,
   UserPlus,
-} from "lucide-react"; // Added UserPlus import
+} from "lucide-react";
 
 const Matches = () => {
   const navigate = useNavigate();
@@ -206,10 +206,11 @@ const Matches = () => {
                   match.team1?.playerCount === userTeam.playerCount &&
                   match.stadiumId === userTeam.stadiumId &&
                   match.date === userTeam.playDate &&
-                  match.time === userTeam.playTime && (
+                  match.time === userTeam.playTime &&
+                  userTeam.joinMatch && (
                     <button
                       onClick={(e) => {
-                        e.stopPropagation(); // This prevents the parent onClick from firing
+                        e.stopPropagation();
                         navigate(`/matches/${match.id}`);
                       }}
                       className="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded-full text-sm flex items-center"

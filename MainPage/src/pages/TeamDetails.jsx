@@ -1,6 +1,7 @@
 "use client";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTeams } from "../context/TeamsContext";
+import { useEffect, useState } from "react";
 
 const TeamDetails = () => {
   const { id } = useParams();
@@ -14,16 +15,22 @@ const TeamDetails = () => {
     setTeamReady,
     removeTeam,
   } = useTeams();
-  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+  const [currentUser, setCurrentUser] = useState(null);
+  const [team, setTeam] = useState(null);
 
-  const team = teams.find((t) => t.id === Number(id));
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    setCurrentUser(user);
+    const foundTeam = teams.find((t) => t.id === Number(id));
+    setTeam(foundTeam);
+  }, [id, teams]);
 
   if (!team) {
     return <div>Komanda tapılmadı</div>;
   }
 
-  const isCreator = team.creator.id === currentUser.id;
-  const isMember = team.members.some((member) => member.id === currentUser.id);
+  const isCreator = team.creator.id === currentUser?.id;
+  const isMember = team.members.some((member) => member.id === currentUser?.id);
 
   const handleLeaveTeam = () => {
     if (isCreator) {
@@ -52,12 +59,14 @@ const TeamDetails = () => {
   };
 
   const handleUpdatePlayerCount = (newCount) => {
-    updatePlayerCount(team.id, newCount);
+    const updatedTeam = { ...team, playerCount: newCount };
+    updateTeam(updatedTeam);
   };
 
   const handleSetReady = () => {
     if (team.members.length === team.playerCount) {
-      setTeamReady(team.id, true);
+      const updatedTeam = { ...team, isReady: true };
+      updateTeam(updatedTeam);
       alert("Komanda hazır vəziyyətə gətirildi!");
     } else {
       alert(
@@ -86,11 +95,11 @@ const TeamDetails = () => {
       <h1 className="text-3xl font-bold mb-6">{team.name}</h1>
       <div className="bg-white rounded-lg shadow-md p-6">
         <p>Şəhər: {team.city}</p>
-        <p>Stadion: {team.stadium}</p>
+        <p>Stadion: {team.stadium || "Məlumat yoxdur"}</p>
         <p>Tarix: {team.playDate}</p>
         <p>Saat: {team.playTime}</p>
         <p>
-          Oyunçu sayı: {team.currentPlayers} / {team.playerCount}
+          Oyunçu sayı: {team.members.length} / {team.playerCount}
         </p>
         <p>Matça qoşulacaq: {team.joinMatch ? "Bəli" : "Xeyr"}</p>
         <p>Hazırdır: {team.isReady ? "Bəli" : "Xeyr"}</p>

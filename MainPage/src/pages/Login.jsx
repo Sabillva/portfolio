@@ -9,62 +9,94 @@ const Login = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  const debugLocalStorage = () => {
+    try {
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+      console.log("Current users in localStorage:", users);
+
+      // Check if the current email exists
+      const userExists = users.some((u) => u.email === email);
+      console.log(`User with email ${email} exists: ${userExists}`);
+
+      // Check localStorage size
+      let totalSize = 0;
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        const value = localStorage.getItem(key);
+        totalSize += (key.length + value.length) * 2; // UTF-16 uses 2 bytes per character
+      }
+      console.log(
+        `Total localStorage usage: ${(totalSize / 1024).toFixed(2)} KB`
+      );
+    } catch (err) {
+      console.error("Error debugging localStorage:", err);
+    }
+  };
+
+  debugLocalStorage();
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
 
     try {
       const users = JSON.parse(localStorage.getItem("users")) || [];
-      const user = users.find(
-        (u) => u.email === email && u.password === password
-      );
 
-      if (user) {
-        // Optimize the user data to store only what's needed
-        const essentialUserData = {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          phone: user.phone,
-          profileImage: user.profileImage,
-        };
+      // Debug information
+      console.log("Stored users:", users);
+      console.log("Attempting login with:", { email, password });
 
-        try {
-          // Try to store the optimized user data
-          localStorage.setItem(
-            "currentUser",
-            JSON.stringify(essentialUserData)
-          );
-          localStorage.setItem("isLoggedIn", "true");
+      // Find user with matching email
+      const user = users.find((u) => u.email === email);
 
-          // Clear some space if needed
+      if (!user) {
+        setError("Email və ya şifrə yanlışdır!");
+        return;
+      }
+
+      // Check password separately
+      if (user.password !== password) {
+        setError("Email və ya şifrə yanlışdır!");
+        return;
+      }
+
+      // User found and password matches
+      // Optimize the user data to store only what's needed
+      const essentialUserData = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone || "",
+        profileImage: user.profileImage || null,
+      };
+
+      try {
+        // Try to store the optimized user data
+        localStorage.setItem("currentUser", JSON.stringify(essentialUserData));
+        localStorage.setItem("isLoggedIn", "true");
+
+        // Clear some space if needed
+        clearUnusedLocalStorage();
+
+        navigate("/stadiums");
+      } catch (storageError) {
+        // If storage error occurs, try to clear space and retry
+        if (storageError.name === "QuotaExceededError") {
           clearUnusedLocalStorage();
 
+          // Try again with even more minimal data
+          const minimalUserData = {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+          };
+
+          localStorage.setItem("currentUser", JSON.stringify(minimalUserData));
+          localStorage.setItem("isLoggedIn", "true");
           navigate("/stadiums");
-        } catch (storageError) {
-          // If storage error occurs, try to clear space and retry
-          if (storageError.name === "QuotaExceededError") {
-            clearUnusedLocalStorage();
-
-            // Try again with even more minimal data
-            const minimalUserData = {
-              id: user.id,
-              name: user.name,
-              email: user.email,
-            };
-
-            localStorage.setItem(
-              "currentUser",
-              JSON.stringify(minimalUserData)
-            );
-            localStorage.setItem("isLoggedIn", "true");
-            navigate("/stadiums");
-          } else {
-            throw storageError;
-          }
+        } else {
+          throw storageError;
         }
-      } else {
-        setError("Email və ya şifrə yanlışdır!");
       }
     } catch (err) {
       console.error("Login error:", err);

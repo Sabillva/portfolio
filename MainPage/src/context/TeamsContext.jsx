@@ -145,6 +145,8 @@ export const TeamsProvider = ({ children }) => {
   const isUserInAnyTeam = useCallback(
     (userId) => {
       if (!userId) return false;
+
+      // Check if user exists in any team's members
       return teams.some(
         (team) =>
           team.members && team.members.some((member) => member.id === userId)
